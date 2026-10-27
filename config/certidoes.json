@@ -1,0 +1,99 @@
+{
+  "_leia_me": "Catálogo de certidões. fonte = brasilapi | infosimples | transparencia | manual. escopo = raiz (vale para matriz e filiais, emitida uma vez) ou estabelecimento (uma por CNPJ). renovar_com_dias = o robô emite de novo quando faltar esse número de dias para vencer. Para desligar uma consulta automática, troque ativo para false.",
+  "certidoes": [
+    {"id": "cnpj", "nome": "Situação cadastral do CNPJ", "grupo": "Cadastral", "orgao": "Receita Federal",
+     "fonte": "brasilapi", "escopo": "estabelecimento", "ativo": true, "consulta_diaria": true,
+     "link": "https://solucoes.receita.fazenda.gov.br/servicos/cnpjreva/cnpjreva_solicitacao.asp"},
+
+    {"id": "cnd_federal", "nome": "CND Federal (RFB/PGFN)", "grupo": "Fiscal", "orgao": "Receita Federal / PGFN",
+     "fonte": "infosimples", "servico": "receita-federal/pgfn", "parametros": {"preferencia_emissao": "2via"},
+     "escopo": "raiz", "validade_padrao_dias": 180, "renovar_com_dias": 15, "ativo": true,
+     "link": "https://servicos.receitafederal.gov.br/servico/certidoes/#/home/cnpj"},
+
+    {"id": "crf_fgts", "nome": "CRF – Regularidade do FGTS", "grupo": "Fiscal", "orgao": "CAIXA",
+     "fonte": "infosimples", "servico": "caixa/regularidade", "parametros": {},
+     "escopo": "estabelecimento", "validade_padrao_dias": 30, "renovar_com_dias": 5, "ativo": true,
+     "link": "https://consulta-crf.caixa.gov.br/consultacrf/pages/consultaEmpregador.jsf"},
+
+    {"id": "cnd_estadual", "nome": "CND Estadual (SEFAZ-BA)", "grupo": "Fiscal", "orgao": "SEFAZ Bahia",
+     "fonte": "infosimples", "servico": "sefaz/ba/certidao-debitos", "parametros": {},
+     "escopo": "estabelecimento", "validade_padrao_dias": 60, "renovar_com_dias": 10, "ativo": true,
+     "link": "https://servicos.sefaz.ba.gov.br/sistemas/DSCRE/Modulos/Publico/EmissaoCertidao.aspx"},
+
+    {"id": "cnd_municipal", "nome": "CND Municipal (Salvador)", "grupo": "Fiscal", "orgao": "SEFAZ Salvador / PGMS",
+     "fonte": "manual", "escopo": "raiz", "validade_padrao_dias": 90,
+     "link": "https://www.sefaz.salvador.ba.gov.br/certidoes",
+     "obs": "Sem API confirmada para Salvador. A certidão de PJ abrange matriz e filiais no município."},
+
+    {"id": "cndt", "nome": "CNDT – Débitos Trabalhistas", "grupo": "Trabalhista", "orgao": "TST",
+     "fonte": "infosimples", "servico": "tribunal/tst/cndt", "parametros": {},
+     "escopo": "raiz", "validade_padrao_dias": 180, "renovar_com_dias": 15, "ativo": true,
+     "link": "https://cndt-certidao.tst.jus.br/inicio.faces"},
+
+    {"id": "ceat_trt5", "nome": "CEAT – Ações Trabalhistas (TRT5)", "grupo": "Trabalhista", "orgao": "TRT 5ª Região",
+     "fonte": "infosimples", "servico": "tribunal/trt5/ceat", "parametros": {},
+     "escopo": "estabelecimento", "validade_padrao_dias": 30, "renovar_com_dias": 5, "ativo": true,
+     "link": "https://www.trt5.jus.br/certidao-eletronica/1"},
+
+    {"id": "tjba_civel", "nome": "Distribuição Cível Estadual (TJBA)", "grupo": "Judicial", "orgao": "TJBA",
+     "fonte": "infosimples", "servico": "tribunal/tjba/primeiro-grau", "parametros": {"tipo_certidao": "civel"},
+     "escopo": "estabelecimento", "validade_padrao_dias": 30, "renovar_com_dias": 5, "ativo": true,
+     "link": "https://portalcertidoes.tjba.jus.br/#/primeirograu",
+     "obs": "Confirmar no painel da Infosimples o valor exato do parâmetro tipo_certidao."},
+
+    {"id": "tjba_falencia", "nome": "Falência e Recuperação Judicial (TJBA)", "grupo": "Judicial", "orgao": "TJBA",
+     "fonte": "infosimples", "servico": "tribunal/tjba/primeiro-grau", "parametros": {"tipo_certidao": "falencia"},
+     "escopo": "estabelecimento", "validade_padrao_dias": 30, "renovar_com_dias": 5, "ativo": true,
+     "link": "https://portalcertidoes.tjba.jus.br/#/primeirograu",
+     "obs": "Confirmar no painel da Infosimples o valor exato do parâmetro tipo_certidao."},
+
+    {"id": "trf1_civel", "nome": "Distribuição Cível Federal (TRF1)", "grupo": "Judicial", "orgao": "TRF 1ª Região",
+     "fonte": "infosimples", "servico": "tribunal/trf1/certidao", "parametros": {"tipo": "civel", "considera_filiais": "true"},
+     "escopo": "raiz", "validade_padrao_dias": 30, "renovar_com_dias": 5, "ativo": true,
+     "link": "https://sistemas.trf1.jus.br/certidao/#/solicitacao",
+     "obs": "Execuções fiscais federais tramitam na Justiça Federal e aparecem nesta certidão."},
+
+    {"id": "cgu_ceis_cnep", "nome": "Correcional CGU (CEIS/CNEP/CEPIM)", "grupo": "Sanções", "orgao": "CGU",
+     "fonte": "infosimples", "servico": "cgu/cnc-tipo1", "parametros": {},
+     "escopo": "estabelecimento", "validade_padrao_dias": 30, "renovar_com_dias": 5, "ativo": true,
+     "fonte_gratuita": "transparencia",
+     "link": "https://certidoes.cgu.gov.br/",
+     "obs": "Se houver a chave gratuita do Portal da Transparência, o robô consulta CEIS e CNEP por lá sem custo."},
+
+    {"id": "protesto", "nome": "Protesto (CENPROT)", "grupo": "Crédito", "orgao": "Cartórios de Protesto",
+     "fonte": "manual", "escopo": "raiz", "validade_padrao_dias": 30,
+     "link": "https://www.pesquisaprotesto.com.br/",
+     "obs": "Consulta gratuita exige login gov.br; não há API pública disponível."},
+
+    {"id": "biros", "nome": "Serasa / SPC / Boa Vista / Quod", "grupo": "Crédito", "orgao": "Birôs de crédito",
+     "fonte": "manual", "escopo": "raiz", "validade_padrao_dias": 30, "link": "",
+     "obs": "Depende do produto contratado em cada birô."},
+
+    {"id": "cadin", "nome": "CADIN Federal", "grupo": "Crédito", "orgao": "Receita Federal / e-CAC",
+     "fonte": "manual", "escopo": "raiz", "validade_padrao_dias": 30, "link": "https://cav.receita.fazenda.gov.br/",
+     "obs": "Exige acesso e-CAC com certificado digital."},
+
+    {"id": "juceb", "nome": "Certidão Simplificada (JUCEB)", "grupo": "Cadastral", "orgao": "JUCEB",
+     "fonte": "manual", "escopo": "estabelecimento", "validade_padrao_dias": 30, "link": "https://www.juceb.ba.gov.br/"},
+
+    {"id": "cno_obra", "nome": "CND de Obra / CNO", "grupo": "Imóvel e obra", "orgao": "Receita Federal",
+     "fonte": "manual", "escopo": "estabelecimento", "validade_padrao_dias": 180,
+     "link": "https://www.gov.br/receitafederal/pt-br/assuntos/construcao-civil/cnd"},
+
+    {"id": "matricula", "nome": "Matrícula, ônus reais e vintenária", "grupo": "Imóvel e obra", "orgao": "Registro de Imóveis",
+     "fonte": "manual", "escopo": "estabelecimento", "validade_padrao_dias": 30, "link": "https://www.registradores.onr.org.br/"},
+
+    {"id": "acoes_reais", "nome": "Ações reais e reipersecutórias", "grupo": "Imóvel e obra", "orgao": "Registro de Imóveis",
+     "fonte": "manual", "escopo": "estabelecimento", "validade_padrao_dias": 30, "link": "https://www.registradores.onr.org.br/"},
+
+    {"id": "iptu", "nome": "Regularidade do imóvel / IPTU", "grupo": "Imóvel e obra", "orgao": "SEFAZ Salvador",
+     "fonte": "manual", "escopo": "estabelecimento", "validade_padrao_dias": 90, "link": "https://www.sefaz.salvador.ba.gov.br/certidoes"},
+
+    {"id": "spu", "nome": "SPU – Foro/Laudêmio (CAT)", "grupo": "Imóvel e obra", "orgao": "SPU",
+     "fonte": "manual", "escopo": "estabelecimento", "validade_padrao_dias": 90,
+     "aplica_a": ["porto-mtz", "porto-fil"], "link": "https://www.gov.br/economia/pt-br/assuntos/patrimonio-da-uniao"},
+
+    {"id": "licencas", "nome": "Alvará / Licença ambiental / Habite-se", "grupo": "Imóvel e obra", "orgao": "SEDUR / INEMA / SEMAN",
+     "fonte": "manual", "escopo": "estabelecimento", "validade_padrao_dias": 365, "link": ""}
+  ]
+}

@@ -1,0 +1,10 @@
+[
+  {"id": "carozzo",        "empreendimento": "Carozzo Desenvolvimento Imobiliário", "razao_social": "Carozzo Desenvolvimento Imobiliário LTDA", "cnpj": "21.049.800/0001-77", "tipo": "Matriz"},
+  {"id": "balena-mtz",     "empreendimento": "Terrazza Balena",  "razao_social": "Terrazza Balena SPE LTDA", "cnpj": "47.537.136/0001-07", "tipo": "Matriz"},
+  {"id": "balena-fil",     "empreendimento": "Terrazza Balena",  "razao_social": "Terrazza Balena SPE LTDA", "cnpj": "47.537.136/0002-80", "tipo": "Filial/SPE", "obs": "CONFIRMAR: na lista veio 0002-88, que não fecha no dígito verificador; 0002-80 é o que fecha."},
+  {"id": "icone-fil",      "empreendimento": "Ícone Connected Residence", "razao_social": "Condomínio Ícone Connected Residence Terrazza Feira SPE LTDA", "cnpj": "54.338.722/0002-60", "tipo": "Filial/SPE"},
+  {"id": "wellness-mtz",   "empreendimento": "Carozzo Wellness", "razao_social": "Carozzo Wellness Jardim Armação LTDA", "cnpj": "30.368.082/0001-92", "tipo": "Matriz"},
+  {"id": "wellness-fil",   "empreendimento": "Carozzo Wellness", "razao_social": "Carozzo Wellness Jardim Armação LTDA", "cnpj": "30.368.082/0002-73", "tipo": "Filial"},
+  {"id": "porto-mtz",      "empreendimento": "Porto Privilege Residencial", "razao_social": "Porto Privilege SPE LTDA", "cnpj": "37.152.367/0001-30", "tipo": "Matriz"},
+  {"id": "porto-fil",      "empreendimento": "Porto Privilege Residencial", "razao_social": "Porto Privilege SPE LTDA", "cnpj": "37.152.367/0002-11", "tipo": "Filial/SPE"}
+]
