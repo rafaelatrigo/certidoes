@@ -81,5 +81,14 @@
   "cnpj": "37.152.367/0002-11",
   "tipo": "Filial/SPE",
   "municipio": "Salvador"
+ },
+ {
+  "id": "altamente-mtz",
+  "empreendimento": "Altamente Rentável",
+  "razao_social": "Altamente Rentável Imobiliária Digital LTDA",
+  "cnpj": "43.652.061/0001-46",
+  "tipo": "Matriz",
+  "municipio": "Salvador",
+  "obs": "Imobiliária digital (corretagem), aberta em 24/09/2021. Sócios pessoas físicas; não é participação da Carozzo, por isso não aparece nas participações do Serasa."
  }
 ]
