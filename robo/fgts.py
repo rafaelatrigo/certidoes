@@ -19,19 +19,17 @@ def _data_iso(txt):
 
 class ConsultaFGTS:
     def __init__(self):
-        from playwright.sync_api import sync_playwright
-        self._pw = sync_playwright().start()
-        self._browser = self._pw.chromium.launch()
-        self._page = self._browser.new_page(
+        import navegador
+        self._page = navegador.browser().new_page(
             locale="pt-BR", timezone_id="America/Sao_Paulo",
             user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36")
         self._page.set_default_timeout(45000)
 
     def fechar(self):
         try:
-            self._browser.close()
-        finally:
-            self._pw.stop()
+            self._page.close()
+        except Exception:
+            pass
 
     def consultar(self, cnpj_digitos):
         p = self._page

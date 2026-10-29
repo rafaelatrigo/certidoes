@@ -6,27 +6,13 @@ com data, fonte e link para conferência. Não é certidão oficial.
 """
 import html
 
-_browser = None
-_pw = None
-
-
 def _pagina():
-    global _browser, _pw
-    if _browser is None:
-        from playwright.sync_api import sync_playwright
-        _pw = sync_playwright().start()
-        _browser = _pw.chromium.launch()
-    return _browser.new_page()
+    import navegador
+    return navegador.browser().new_page()
 
 
 def fechar():
-    global _browser, _pw
-    if _browser is not None:
-        try:
-            _browser.close()
-        finally:
-            _pw.stop()
-            _browser = _pw = None
+    pass
 
 
 def gerar(titulo, empresa, cnpj, linhas, fonte, link, gerado_em):

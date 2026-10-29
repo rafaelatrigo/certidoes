@@ -152,7 +152,7 @@ def consultar_tcu(cnpj):
         except Exception:
             if tentativa == 2:
                 raise RuntimeError("TCU não respondeu depois de 3 tentativas")
-            time.sleep(8)
+            time.sleep(20 * (tentativa + 1))
     saida = {}
     for c in j.get("certidoes") or []:
         texto = f"{c.get('emissor', '')} {c.get('tipo', '')} {c.get('descricao', '')}".upper()
@@ -365,7 +365,7 @@ def main():
                 else:
                     if cnpj not in tcu_cache:
                         tcu_cache[cnpj] = consultar_tcu(cnpj)
-                        time.sleep(1)
+                        time.sleep(4)
                     comp_ant = next((v.get("comprovante") for k, v in anteriores.items()
                                      if k.startswith(emp["id"] + "|") and (v or {}).get("comprovante", {}).get("nome", "").startswith("Consulta consolidada TCU")), None)
                     if f"pdf_{cnpj}" not in tcu_cache:
@@ -397,6 +397,8 @@ def main():
     if fgts_cli is not None:
         fgts_cli.fechar()
     relatorio.fechar()
+    import navegador
+    navegador.fechar()
 
     estado = {
         "pgfn": pgfn_info,
