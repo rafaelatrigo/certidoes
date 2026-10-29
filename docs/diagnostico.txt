@@ -1,3 +1,3 @@
-Execução 2026-10-29T17:13:13-03:00 · duração total 51s
-Tempo por fonte: fgts 33s, pgfn 1s, receita 3s
+Execução 2026-10-29T18:05:24-03:00 · duração total 17s
+Tempo por fonte: pgfn 1s, receita 2s
 tcu: TCU não respondeu (firewall do TCU ou instabilidade)
