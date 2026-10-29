@@ -17,7 +17,7 @@ concurrency:
 jobs:
   atualizar:
     runs-on: ubuntu-latest
-    timeout-minutes: 60
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@v4
 
@@ -31,6 +31,7 @@ jobs:
           python -m playwright install --with-deps chromium
 
       - name: Consultar fontes
+        timeout-minutes: 20
         env:
           PAINEL_SENHA: ${{ secrets.PAINEL_SENHA }}
         run: python robo/atualizar.py

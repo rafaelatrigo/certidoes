@@ -216,7 +216,7 @@ def tcu_pdf(cnpj):
     """Pede ao TCU a certidão consolidada em PDF. Devolve bytes ou None (o firewall do TCU às vezes recusa)."""
     url = f"https://certidoes-apf.apps.tcu.gov.br/api/rest/publico/certidoes/{cnpj}?seEmitirPDF=true"
     try:
-        r = http.get(url, timeout=120)
+        r = http.get(url, timeout=30)
         r.raise_for_status()
         b64 = (r.json() or {}).get("certidaoPDF")
         return base64.b64decode(b64) if b64 else None
@@ -281,19 +281,25 @@ def main():
         emissores.setdefault(digitos(e["cnpj"])[:8], e["id"])
 
     tcu_cache, receita_cache = {}, {}
+    tempos = {}
+    inicio_total = time.time()
     diagnostico = {}
     fgts_cli = None
     fgts_bloqueio = None
+    tcu_pdf_off = False
+    tcu_pdf_falhou_em = estado_ant.get("tcu_pdf_falhou_em")
 
     # PGFN: baixa a base só quando sai um trimestre novo
     raizes = sorted({digitos(e["cnpj"])[:8] for e in empresas})
     try:
+        t_pgfn = time.time()
         tri = pgfn.ultimo_trimestre(http, hoje())
         if tri != pgfn_info.get("trimestre") or set(raizes) - set(pgfn_info.get("raizes", {})):
             print(f"PGFN: lendo a base {tri} (pode levar alguns minutos)")
             achados = pgfn.buscar(http, tri, raizes)
             pgfn_info = {"trimestre": tri, "consultado_em": agora_iso(),
                          "raizes": {r: pgfn.resumo(achados[r], tri) for r in raizes}}
+        tempos["pgfn"] = time.time() - t_pgfn
     except Exception as exc:
         print("PGFN: falha ao ler a base")
         pgfn_info = dict(pgfn_info, falha=str(exc)[:300])
@@ -316,6 +322,7 @@ def main():
                 continue
 
             cnpj = digitos(emp["cnpj"])
+            t_fonte = time.time()
             try:
                 if cert["fonte"] == "fgts":
                     if not fgts_precisa(anterior):
@@ -370,8 +377,15 @@ def main():
                                      if k.startswith(emp["id"] + "|") and (v or {}).get("comprovante", {}).get("nome", "").startswith("Consulta consolidada TCU")), None)
                     if f"pdf_{cnpj}" not in tcu_cache:
                         comp = comp_ant
-                        if not comp or def_dias_desde(comp.get("emissao")) >= 7:
+                        tentar = (not comp or def_dias_desde(comp.get("emissao")) >= 7) \
+                            and not tcu_pdf_off and def_dias_desde(estado_ant.get("tcu_pdf_falhou_em")) >= 7
+                        if tentar:
+                            t0 = time.time()
                             pdf = tcu_pdf(cnpj)
+                            tempos["tcu_pdf"] = tempos.get("tcu_pdf", 0) + time.time() - t0
+                            if not pdf:
+                                tcu_pdf_off = True   # o TCU recusou: não insiste nos demais CNPJs
+                                tcu_pdf_falhou_em = hoje().isoformat()
                             if pdf:
                                 comp = salvar_pdf(pdf, f"{emp['id']}_tcu", "Consulta consolidada TCU (CEIS, CNEP, CNJ)", hoje().isoformat())
                         tcu_cache[f"pdf_{cnpj}"] = comp
@@ -386,6 +400,7 @@ def main():
                 novo["consultado_em"] = agora_iso()
                 resultados[chave] = novo
                 resumo["consultadas"] += 1
+                tempos[cert["fonte"]] = tempos.get(cert["fonte"], 0) + time.time() - t_fonte
             except Exception as exc:
                 tem_bom = anterior.get("situacao") in ("negativa", "positiva", "cpen") and anterior.get("tipo") != "manual"
                 base = {k: v for k, v in anterior.items() if k != "ultima_falha"} if tem_bom else {"situacao": "erro", "tipo": "consulta"}
@@ -402,6 +417,7 @@ def main():
 
     estado = {
         "pgfn": pgfn_info,
+        "tcu_pdf_falhou_em": tcu_pdf_falhou_em,
         "versao": 2,
         "modo": "gratuito",
         "atualizado_em": agora_iso(),
@@ -413,7 +429,8 @@ def main():
     os.makedirs(DOCS, exist_ok=True)
     # diagnóstico público e sem dados das empresas: só a primeira mensagem de erro de cada fonte
     with open(os.path.join(DOCS, "diagnostico.txt"), "w", encoding="utf-8") as f:
-        f.write(f"Execução {agora_iso()}\n")
+        f.write(f"Execução {agora_iso()} · duração total {time.time() - inicio_total:.0f}s\n")
+        f.write("Tempo por fonte: " + ", ".join(f"{k} {v:.0f}s" for k, v in sorted(tempos.items())) + "\n")
         for fonte, msg in sorted(diagnostico.items()):
             f.write(f"{fonte}: {re.sub(r'[0-9]{14}', '[cnpj]', msg)}\n")
     with open(ARQ_DADOS, "w", encoding="utf-8") as f:
