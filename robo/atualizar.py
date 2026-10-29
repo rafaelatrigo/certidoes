@@ -222,7 +222,9 @@ def main():
         emissores.setdefault(digitos(e["cnpj"])[:8], e["id"])
 
     tcu_cache, receita_cache = {}, {}
+    diagnostico = {}
     fgts_cli = None
+    fgts_bloqueio = None
 
     # PGFN: baixa a base só quando sai um trimestre novo
     raizes = sorted({digitos(e["cnpj"])[:8] for e in empresas})
@@ -260,10 +262,17 @@ def main():
                     if not fgts_precisa(anterior):
                         resultados[chave] = anterior
                         continue
+                    if fgts_bloqueio:
+                        raise RuntimeError(fgts_bloqueio)
                     if fgts_cli is None:
                         import fgts
                         fgts_cli = fgts.ConsultaFGTS()
-                    novo = fgts_cli.consultar(cnpj)
+                    try:
+                        novo = fgts_cli.consultar(cnpj)
+                    except RuntimeError as exc:
+                        if "não carregou" in str(exc) or "não respondeu" in str(exc):
+                            fgts_bloqueio = str(exc)   # site fora do alcance: não insiste nos demais CNPJs
+                        raise
                     time.sleep(2)
                 elif cert["fonte"] == "pgfn":
                     item = (pgfn_info.get("raizes") or {}).get(cnpj[:8])
@@ -295,7 +304,9 @@ def main():
                 resultados[chave] = novo
                 resumo["consultadas"] += 1
             except Exception as exc:
-                base = {k: v for k, v in anterior.items() if k != "ultima_falha"} if anterior.get("situacao") not in (None, "erro") else {"situacao": "erro", "tipo": "consulta"}
+                tem_bom = anterior.get("situacao") in ("negativa", "positiva", "cpen") and anterior.get("tipo") != "manual"
+                base = {k: v for k, v in anterior.items() if k != "ultima_falha"} if tem_bom else {"situacao": "erro", "tipo": "consulta"}
+                diagnostico.setdefault(cert["fonte"], str(exc)[:300])
                 base["ultima_falha"] = {"em": agora_iso(), "mensagem": str(exc)[:300]}
                 resultados[chave] = base
                 resumo["falhas"] += 1
@@ -314,6 +325,11 @@ def main():
         "ultima_execucao": resumo,
     }
     os.makedirs(DOCS, exist_ok=True)
+    # diagnóstico público e sem dados das empresas: só a primeira mensagem de erro de cada fonte
+    with open(os.path.join(DOCS, "diagnostico.txt"), "w", encoding="utf-8") as f:
+        f.write(f"Execução {agora_iso()}\n")
+        for fonte, msg in sorted(diagnostico.items()):
+            f.write(f"{fonte}: {re.sub(r'[0-9]{14}', '[cnpj]', msg)}\n")
     with open(ARQ_DADOS, "w", encoding="utf-8") as f:
         f.write(cifrar(json.dumps(estado, ensure_ascii=False).encode("utf-8"), SENHA))
     print(f"Concluído: {resumo['consultadas']} consultas automáticas, {resumo['falhas']} falhas.")

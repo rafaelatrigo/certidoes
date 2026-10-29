@@ -22,7 +22,9 @@ class ConsultaFGTS:
         from playwright.sync_api import sync_playwright
         self._pw = sync_playwright().start()
         self._browser = self._pw.chromium.launch()
-        self._page = self._browser.new_page(locale="pt-BR")
+        self._page = self._browser.new_page(
+            locale="pt-BR", timezone_id="America/Sao_Paulo",
+            user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36")
         self._page.set_default_timeout(45000)
 
     def fechar(self):
@@ -33,14 +35,23 @@ class ConsultaFGTS:
 
     def consultar(self, cnpj_digitos):
         p = self._page
-        p.goto(URL, wait_until="domcontentloaded")
+        try:
+            resp = p.goto(URL, wait_until="domcontentloaded", timeout=60000)
+        except Exception as exc:
+            raise RuntimeError(f"Site da CAIXA não respondeu ao robô: {str(exc).splitlines()[0][:120]}")
+        try:
+            p.wait_for_selector("#mainForm\\:txtInscricao1", state="visible", timeout=30000)
+        except Exception:
+            corpo = " ".join((p.inner_text("body") if p.locator("body").count() else "").split())[:160]
+            raise RuntimeError(f"Formulário da CAIXA não carregou (HTTP {resp.status if resp else '?'}, "
+                               f"título '{p.title()}'): {corpo or 'página vazia'}")
         texto_inicial = p.inner_text("body").lower()
         if "captcha" in texto_inicial or p.locator("iframe[src*='captcha'], img[src*='captcha']").count():
             raise RuntimeError("A CAIXA passou a exigir captcha; consulta não automatizável")
 
-        campo = p.locator("input[type='text']:visible").first
-        campo.fill(cnpj_digitos)
-        p.get_by_role("button", name=re.compile("Consultar", re.I)).click()
+        p.select_option("#mainForm\\:tipoEstabelecimento", "1")
+        p.fill("#mainForm\\:txtInscricao1", cnpj_digitos)
+        p.click("#mainForm\\:btnConsultar")
         p.wait_for_load_state("networkidle")
         texto = p.inner_text("body")
         t = texto.upper()
