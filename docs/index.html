@@ -73,7 +73,8 @@ html, body { margin: 0; }
 body { background: var(--bg); color: var(--fg); font: 15px/1.5 var(--f-body); }
 body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--topo-bg); }
 .gutter { padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
-.wrap { max-width: 1280px; margin: 0 auto; display: grid; gap: 22px; }
+.wrap { max-width: 1280px; width: 100%; margin: 0 auto; display: grid; gap: 22px; }
+.wrap .wrap { max-width: none; }
 h1, h2, h3 { font-family: var(--f-marca); font-weight: 500; letter-spacing: .01em; text-wrap: balance; margin: 0; }
 h1 { font-size: clamp(24px, 3vw, 30px); line-height: 1.15; }
 h2 { font-size: 19px; }
@@ -307,7 +308,7 @@ main.gutter { padding-block: 22px 56px; }
           <thead><tr><th>Certidão</th><th>Como é cobrado</th><th>Valor por certidão</th><th>Quantas o grupo precisa</th></tr></thead>
           <tbody></tbody>
         </table></div>
-        <p class="muted" style="font-size:12.5px">Valores marcados como "a confirmar" ainda não foram conferidos na tabela oficial de 2026 do TJBA e da JUCEB. Para preencher, edite o campo <span class="mono">custo_valor</span> em <span class="mono">config/certidoes.json</span>.</p>
+        <p class="muted" style="font-size:12.5px">Fontes: Tabelas III e V de custas e emolumentos do TJBA, vigentes desde 01/01/2026 (Decreto Judiciário nº 1075/2025), e tabela de preços da JUCEB para a capital. Pedidos pelo ONR ou por despachante podem ter taxa de serviço além do emolumento. Para atualizar, edite <span class="mono">custo_valor</span> em <span class="mono">config/certidoes.json</span>.</p>
       </section>
 
       <!-- 6. POR QUE -->
@@ -520,7 +521,7 @@ main.gutter { padding-block: 22px 56px; }
       return `<tr><td><b>${esc(c.nome)}</b><br><span class="muted" style="font-size:12px">${esc(c.orgao)}</span></td>
         <td>${esc(c.custo_base || c.custo)}</td>
         <td>${c.custo_valor ? `<b>${esc(c.custo_valor)}</b>` : `<span class="tag pago">a confirmar</span>`}</td>
-        <td class="mono">${qtd} ${c.escopo === "raiz" ? "(uma por grupo de CNPJ)" : "(uma por CNPJ)"}</td></tr>`;
+        <td>${c.custo_qtd ? esc(c.custo_qtd) : `<span class="mono">${qtd}</span> ${c.escopo === "raiz" ? "(uma por grupo de CNPJ)" : "(uma por CNPJ)"}`}</td></tr>`;
     }).join("");
 
     const ex = D.ultima_execucao || {};
