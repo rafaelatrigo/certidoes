@@ -413,6 +413,7 @@ main.gutter { padding-block: 22px 56px; }
     if (s === "positiva") return { b: "pend", r: "Com pendência" };
     if (s === "indefinido") return { b: "pend", r: "Verificar resultado" };
     if (s === "erro") return { b: "nc", r: "Órgão fora do ar" };
+    if (s === "sem_cadastro") return { b: "nc", r: "CAIXA não localizou o empregador" };
     if (s === "sem_registro") {
       if (c.ia_resultado === "Semi-automático") return { b: "ajuda", r: "Aguardando você" };
       if (c.ia_resultado === "Viável sem custo") return { b: "nc", r: "Robô em construção" };

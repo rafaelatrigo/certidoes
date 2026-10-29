@@ -56,8 +56,20 @@ class ConsultaFGTS:
 
         if "REGULAR NO FGTS" in t and "IRREGULAR" not in t:
             situacao = "negativa"
-        elif "IRREGULAR" in t or "NÃO FOI POSSÍVEL" in t or "NAO FOI POSSIVEL" in t:
+        elif "IRREGULAR" in t:
             situacao = "positiva"
+        elif "NÃO FOI POSSÍVEL VERIFICAR" in t or "NAO FOI POSSIVEL VERIFICAR" in t:
+            # resposta típica de CNPJ sem cadastro de empregador (filial ou SPE sem funcionários)
+            return {
+                "situacao": "sem_cadastro",
+                "emissao": None, "validade": None,
+                "mensagem": "A CAIXA não localizou este CNPJ como empregador (comum em filial ou SPE sem funcionários). "
+                            "Se o banco pedir o CRF deste CNPJ, confirmar com o DP ou a contabilidade.",
+                "tipo": "consulta",
+                "fonte": "CAIXA – consulta pública de regularidade do FGTS",
+                "link_documento": URL,
+                "_pdf": None,
+            }
         else:
             raise RuntimeError("Resposta da CAIXA não reconhecida: " + " ".join(texto.split())[:160])
 
@@ -84,7 +96,7 @@ class ConsultaFGTS:
                 except Exception:
                     pdf = None
 
-        msg = "Regular no FGTS" if situacao == "negativa" else "Não está regular no FGTS (ver site da CAIXA)"
+        msg = "Regular no FGTS" if situacao == "negativa" else "IRREGULAR no FGTS segundo a CAIXA: verificar com o DP ou a contabilidade"
         if numero:
             msg += f" · CRF nº {numero}"
         return {

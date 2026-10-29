@@ -252,6 +252,8 @@ def anexar_relatorio(novo, anterior, emp, cert_id, titulo, linhas, fonte, link, 
 
 
 def fgts_precisa(anterior):
+    if (anterior or {}).get("situacao") == "sem_cadastro":
+        return def_dias_desde(anterior.get("consultado_em")) >= 7
     if not anterior or anterior.get("situacao") in (None, "erro", "positiva"):
         ultima = para_data((anterior or {}).get("consultado_em", "")) or "2000-01-01"
         return (hoje() - date.fromisoformat(ultima)).days >= 1
@@ -339,6 +341,8 @@ def main():
                         fgts_cli = fgts.ConsultaFGTS()
                     try:
                         novo = fgts_cli.consultar(cnpj)
+                        if novo.get("situacao") == "sem_cadastro":
+                            novo["emissao"] = hoje().isoformat(); novo["validade"] = somar_dias(novo["emissao"], 8)
                         pdf = novo.pop("_pdf", None)
                         if pdf and novo.get("emissao"):
                             novo["comprovante"] = salvar_pdf(pdf, f"{emp['id']}_crf_fgts", "CRF FGTS", novo["emissao"])
@@ -415,7 +419,7 @@ def main():
                 resumo["consultadas"] += 1
                 tempos[cert["fonte"]] = tempos.get(cert["fonte"], 0) + time.time() - t_fonte
             except Exception as exc:
-                tem_bom = anterior.get("situacao") in ("negativa", "positiva", "cpen") and anterior.get("tipo") != "manual"
+                tem_bom = anterior.get("situacao") in ("negativa", "positiva", "cpen", "sem_cadastro") and anterior.get("tipo") != "manual"
                 base = {k: v for k, v in anterior.items() if k != "ultima_falha"} if tem_bom else {"situacao": "erro", "tipo": "consulta"}
                 diagnostico.setdefault(cert["fonte"], str(exc)[:300])
                 base["ultima_falha"] = {"em": agora_iso(), "mensagem": str(exc)[:300]}
