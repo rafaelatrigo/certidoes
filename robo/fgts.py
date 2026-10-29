@@ -63,7 +63,7 @@ class ConsultaFGTS:
         else:
             raise RuntimeError("Resposta da CAIXA não reconhecida: " + " ".join(texto.split())[:160])
 
-        validade = emissao = numero = None
+        validade = emissao = numero = pdf = None
         if situacao == "negativa":
             link = p.get_by_text(re.compile("Certificado de Regularidade do FGTS", re.I)).first
             if link.count():
@@ -75,6 +75,12 @@ class ConsultaFGTS:
                     emissao, validade = _data_iso(m[1]), _data_iso(m[2])
                 m = re.search(r"Certificado N[úu]mero:\s*(\d+)", crf)
                 numero = m[1] if m else None
+                try:
+                    p.emulate_media(media="print")
+                    pdf = p.pdf(format="A4", print_background=True, margin={"top": "15mm", "bottom": "15mm", "left": "12mm", "right": "12mm"})
+                    p.emulate_media(media="screen")
+                except Exception:
+                    pdf = None
 
         msg = "Regular no FGTS" if situacao == "negativa" else "Não está regular no FGTS (ver site da CAIXA)"
         if numero:
@@ -87,4 +93,5 @@ class ConsultaFGTS:
             "tipo": "certidao" if validade else "consulta",
             "fonte": "CAIXA – consulta pública de regularidade do FGTS",
             "link_documento": URL,
+            "_pdf": pdf,
         }

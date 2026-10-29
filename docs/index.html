@@ -109,6 +109,11 @@ a { color: inherit; }
 .campo-token { width: 100%; padding: 10px 12px; border-radius: 8px; border: 1px solid var(--line); background: var(--surface-2); color: var(--fg); font: 13px var(--f-mono); }
 .status-run { display: flex; gap: 10px; align-items: center; font-size: 14px; padding: 12px; border-radius: 8px; background: var(--surface-2); }
 .status-run b { font-weight: 600; }
+.pasta { display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: center; justify-content: space-between; padding: 12px 16px; }
+.pasta .info { font-size: 13.5px; display: grid; gap: 2px; min-width: 0; }
+.pasta .info b { font-weight: 600; }
+.pasta .info span { color: var(--muted); font-size: 12.5px; overflow-wrap: anywhere; }
+.btn-pdf { border: 1px solid var(--line); background: var(--surface); border-radius: 6px; padding: 2px 8px; font-size: 12px; cursor: pointer; font-weight: 600; }
 main.gutter { padding-block: 22px 56px; }
 
 /* login */
@@ -290,6 +295,10 @@ main.gutter { padding-block: 22px 56px; }
         <div class="barra" id="barra" role="img"></div>
         <div class="caixas" id="caixas"></div>
         <div class="filtro-ativo" id="filtro-ativo" hidden></div>
+        <div class="card pasta" id="faixa-pasta" hidden>
+          <div class="info"><b id="pasta-titulo">Comprovantes em PDF</b><span id="pasta-sub"></span></div>
+          <div class="acoes"><button class="btn" type="button" id="btn-pasta">Salvar PDFs na pasta</button></div>
+        </div>
       </section>
 
       <!-- 2. ATENÇÃO -->
@@ -565,7 +574,8 @@ main.gutter { padding-block: 22px 56px; }
       const datas = x.res && x.res.validade && x.res.tipo !== "consulta" ? `Emitida em ${br(x.res.emissao)}, válida até ${br(x.res.validade)}.` : (x.res && x.res.consultado_em ? `Consultado em ${new Date(x.res.consultado_em).toLocaleString("pt-BR")}.` : "");
       const det = [x.herd ? "Vale a certidão da matriz." : "", datas, x.res && x.res.mensagem ? x.res.mensagem : "", x.res && x.res.ultima_falha ? `Última tentativa falhou: ${x.res.ultima_falha.mensagem}` : ""].filter(Boolean).join(" ");
       const link = x.res && x.res.link_documento ? ` · <a href="${esc(x.res.link_documento)}" target="_blank" rel="noopener">documento</a>` : "";
-      return `<div><span>${esc(curto(e))} <span class="mono muted">${esc(e.cnpj)}</span></span><span class="pill ${B[x.b].cls}">${esc(x.r)}</span>${det || link ? `<span class="det">${esc(det)}${link}</span>` : ""}</div>`;
+      const pdfb = x.res && x.res.comprovante ? ` <button type="button" class="btn-pdf" data-arq="${esc(x.res.comprovante.arquivo)}">PDF</button>` : "";
+      return `<div><span>${esc(curto(e))} <span class="mono muted">${esc(e.cnpj)}</span></span><span class="pill ${B[x.b].cls}">${esc(x.r)}</span>${det || link || pdfb ? `<span class="det">${esc(det)}${link}${pdfb}</span>` : ""}</div>`;
     }).join("") + `</div>`;
     if (c.fonte === "manual") html += `<div class="nota">Para lançar: em <span class="mono">dados/manuais.csv</span>, uma linha com CNPJ; <span class="mono">${esc(c.id)}</span>; resultado; emissão; validade; observação; link do PDF.${c.escopo === "raiz" ? " Lance só na matriz: vale para as filiais." : ""}</div>`;
     if (c.link) html += `<div class="acoes"><a class="btn" href="${esc(c.link)}" target="_blank" rel="noopener">Abrir site do órgão</a></div>`;
@@ -613,6 +623,7 @@ main.gutter { padding-block: 22px 56px; }
     const txt = await (await fetch(`dados.enc?t=${Date.now()}`, { cache: "no-store" })).text();
     D = JSON.parse(new TextDecoder().decode(await decifrar(txt, senha)));
     render();
+    atualizarFaixaPasta(true).catch(() => {});
   }
   const espera = (ms) => new Promise((ok) => setTimeout(ok, ms));
   async function disparar() {
@@ -688,10 +699,120 @@ main.gutter { padding-block: 22px 56px; }
   document.addEventListener("keydown", (ev) => { if (ev.key === "Escape") fechar(); });
 
   // ---------- entrada ----------
+
+  // ---------- PDFs: abrir e salvar na pasta do OneDrive ----------
+  const MESES = ["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
+  const limpo = (t) => String(t).replace(/[\\/:*?"<>|]+/g, "-").replace(/\s+/g, " ").trim();
+  async function lerPdf(arquivo) {
+    let senha = null; try { senha = sessionStorage.getItem(CHAVE_SESSAO); } catch {}
+    const txt = await (await fetch(`${arquivo}?t=${Date.now()}`, { cache: "no-store" })).text();
+    return decifrar(txt, senha);
+  }
+  document.addEventListener("click", async (ev) => {
+    const b = ev.target.closest(".btn-pdf"); if (!b) return;
+    b.textContent = "Abrindo…";
+    try {
+      const url = URL.createObjectURL(new Blob([await lerPdf(b.dataset.arq)], { type: "application/pdf" }));
+      const a = document.createElement("a"); a.href = url; a.target = "_blank"; a.rel = "noopener"; document.body.appendChild(a); a.click(); a.remove();
+      b.textContent = "PDF";
+    } catch { b.textContent = "Erro"; }
+  });
+  function listaPdfs() {
+    const vistos = new Map();
+    for (const e of D.empresas) for (const c of D.certidoes) {
+      const r = D.resultados[`${e.id}|${c.id}`];
+      const comp = r && r.comprovante;
+      if (!comp || vistos.has(comp.arquivo)) continue;
+      const [a, m, d] = (comp.emissao || "").slice(0, 10).split("-");
+      if (!a) continue;
+      vistos.set(comp.arquivo, {
+        arquivo: comp.arquivo,
+        mes: `${a}-${m} ${MESES[+m - 1]}`,
+        dia: `${a}-${m}-${d}`,
+        nome: limpo(`${comp.nome} - ${curto(e)} ${e.cnpj.replace(/\D/g, "")} - emissão ${d}-${m}-${a}`) + ".pdf",
+      });
+    }
+    return [...vistos.values()];
+  }
+  // a pasta escolhida fica lembrada neste navegador (IndexedDB)
+  const idb = () => new Promise((ok, erro) => { const r = indexedDB.open("certidoes-carozzo", 1); r.onupgradeneeded = () => r.result.createObjectStore("cfg"); r.onsuccess = () => ok(r.result); r.onerror = () => erro(r.error); });
+  async function lerPasta() { try { const db = await idb(); return await new Promise((ok) => { const q = db.transaction("cfg").objectStore("cfg").get("pasta"); q.onsuccess = () => ok(q.result || null); q.onerror = () => ok(null); }); } catch { return null; } }
+  async function guardarPasta(h) { try { const db = await idb(); db.transaction("cfg", "readwrite").objectStore("cfg").put(h, "pasta"); } catch {} }
+  async function existe(dir, nome) { try { await dir.getFileHandle(nome); return true; } catch { return false; } }
+  async function salvarNaPasta(raiz) {
+    let novos = 0;
+    for (const p of listaPdfs()) {
+      const mes = await raiz.getDirectoryHandle(p.mes, { create: true });
+      const dia = await mes.getDirectoryHandle(p.dia, { create: true });
+      if (await existe(dia, p.nome)) continue;
+      const fh = await dia.getFileHandle(p.nome, { create: true });
+      const w = await fh.createWritable(); await w.write(await lerPdf(p.arquivo)); await w.close();
+      novos++;
+    }
+    return novos;
+  }
+  async function contarNovos(raiz) {
+    let n = 0;
+    for (const p of listaPdfs()) {
+      try { const mes = await raiz.getDirectoryHandle(p.mes); const dia = await mes.getDirectoryHandle(p.dia); if (await existe(dia, p.nome)) continue; } catch {}
+      n++;
+    }
+    return n;
+  }
+  async function atualizarFaixaPasta(autoSalvar) {
+    const faixa = $("#faixa-pasta");
+    const total = listaPdfs().length;
+    faixa.hidden = false;
+    if (!window.showDirectoryPicker) {
+      $("#pasta-titulo").textContent = `${total} comprovante(s) em PDF`;
+      $("#pasta-sub").textContent = "Para salvar direto na pasta do OneDrive, abra o painel no Chrome ou no Edge do computador.";
+      $("#btn-pasta").hidden = true; return;
+    }
+    const h = await lerPasta();
+    if (!h) {
+      $("#pasta-titulo").textContent = `${total} comprovante(s) em PDF`;
+      $("#pasta-sub").textContent = "Escolha a pasta Certidões do OneDrive. O painel cria uma pasta por mês e uma por dia, e salva cada PDF com o nome da certidão e a data de emissão.";
+      $("#btn-pasta").textContent = "Escolher pasta e salvar"; return;
+    }
+    const perm = await h.queryPermission({ mode: "readwrite" });
+    if (perm === "granted") {
+      if (autoSalvar) {
+        $("#pasta-titulo").textContent = "Salvando PDFs novos…";
+        const n = await salvarNaPasta(h).catch(() => -1);
+        $("#pasta-titulo").textContent = n < 0 ? "Não consegui salvar na pasta" : (n ? `${n} PDF(s) novo(s) salvo(s) na pasta ${h.name}` : `Pasta ${h.name} em dia`);
+      } else {
+        const n = await contarNovos(h);
+        $("#pasta-titulo").textContent = n ? `${n} PDF(s) novo(s) para salvar` : `Pasta ${h.name} em dia`;
+      }
+      $("#pasta-sub").textContent = `Salvando em: ${h.name} › mês › dia`;
+      $("#btn-pasta").textContent = "Salvar agora";
+    } else {
+      $("#pasta-titulo").textContent = "Há PDFs para salvar na pasta";
+      $("#pasta-sub").textContent = `Pasta escolhida: ${h.name}. O navegador pede uma confirmação a cada vez que o painel é aberto.`;
+      $("#btn-pasta").textContent = "Salvar PDFs na pasta";
+    }
+  }
+  $("#btn-pasta").onclick = async () => {
+    const btn = $("#btn-pasta");
+    try {
+      let h = await lerPasta();
+      if (h && (await h.requestPermission({ mode: "readwrite" })) !== "granted") h = null;
+      if (!h) { h = await window.showDirectoryPicker({ id: "certidoes-carozzo", mode: "readwrite" }); await guardarPasta(h); }
+      btn.disabled = true; btn.textContent = "Salvando…";
+      const n = await salvarNaPasta(h);
+      $("#pasta-titulo").textContent = n ? `${n} PDF(s) salvo(s) na pasta ${h.name}` : `Pasta ${h.name} em dia`;
+      $("#pasta-sub").textContent = `Salvando em: ${h.name} › mês › dia`;
+    } catch (e) {
+      if (e && e.name !== "AbortError") $("#pasta-sub").textContent = "Não consegui salvar. Confira se a pasta do OneDrive está disponível neste computador.";
+    }
+    btn.disabled = false; btn.textContent = "Salvar agora";
+  };
+
   function mostrar(dados) {
     D = dados;
     $("#tela-login").hidden = true; $("#app").hidden = false; $("#btn-sair").hidden = false; $("#btn-atualizar").hidden = false; $("#nav").hidden = false;
     render();
+    atualizarFaixaPasta(true).catch(() => {});
   }
   async function entrar(senha) {
     const txt = await (await fetch("dados.enc", { cache: "no-store" })).text();

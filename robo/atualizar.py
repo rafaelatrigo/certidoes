@@ -12,6 +12,7 @@ Tudo que vai para docs/ sai criptografado com a senha do painel.
 Variáveis de ambiente (Secrets do repositório):
   PAINEL_SENHA   obrigatória – mesma senha que a equipe digita na tela
 """
+import base64
 import csv
 import json
 import os
@@ -29,6 +30,7 @@ import pgfn  # noqa: E402
 RAIZ = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 DOCS = os.path.join(RAIZ, "docs")
 ARQ_DADOS = os.path.join(DOCS, "dados.enc")
+PASTA_PDFS = os.path.join(DOCS, "pdfs")
 FUSO = timezone(timedelta(hours=-3))
 SENHA = os.environ.get("PAINEL_SENHA", "")
 
@@ -200,6 +202,32 @@ def manual_para_resultado(m, cert):
             "tipo": "manual"}
 
 
+def salvar_pdf(conteudo: bytes, chave: str, nome: str, emissao: str):
+    """Grava o PDF criptografado em docs/pdfs e devolve a referência para o painel."""
+    os.makedirs(PASTA_PDFS, exist_ok=True)
+    arq = re.sub(r"[^a-z0-9_-]", "_", chave.lower()) + ".enc"
+    with open(os.path.join(PASTA_PDFS, arq), "w", encoding="utf-8") as f:
+        f.write(cifrar(conteudo, SENHA))
+    return {"arquivo": f"pdfs/{arq}", "nome": nome, "emissao": emissao, "mime": "application/pdf"}
+
+
+def tcu_pdf(cnpj):
+    """Pede ao TCU a certidão consolidada em PDF. Devolve bytes ou None (o firewall do TCU às vezes recusa)."""
+    url = f"https://certidoes-apf.apps.tcu.gov.br/api/rest/publico/certidoes/{cnpj}?seEmitirPDF=true"
+    try:
+        r = http.get(url, timeout=120)
+        r.raise_for_status()
+        b64 = (r.json() or {}).get("certidaoPDF")
+        return base64.b64decode(b64) if b64 else None
+    except Exception:
+        return None
+
+
+def def_dias_desde(iso):
+    d = para_data(iso or "")
+    return (hoje() - date.fromisoformat(d)).days if d else 9999
+
+
 def fgts_precisa(anterior):
     if not anterior or anterior.get("situacao") in (None, "erro", "positiva"):
         ultima = para_data((anterior or {}).get("consultado_em", "")) or "2000-01-01"
@@ -276,6 +304,9 @@ def main():
                         fgts_cli = fgts.ConsultaFGTS()
                     try:
                         novo = fgts_cli.consultar(cnpj)
+                        pdf = novo.pop("_pdf", None)
+                        if pdf and novo.get("emissao"):
+                            novo["comprovante"] = salvar_pdf(pdf, f"{emp['id']}_crf_fgts", "CRF FGTS", novo["emissao"])
                     except RuntimeError as exc:
                         if "não carregou" in str(exc) or "não respondeu" in str(exc):
                             fgts_bloqueio = str(exc)   # site fora do alcance: não insiste nos demais CNPJs
@@ -301,12 +332,23 @@ def main():
                     if cnpj not in tcu_cache:
                         tcu_cache[cnpj] = consultar_tcu(cnpj)
                         time.sleep(1)
+                    comp_ant = next((v.get("comprovante") for k, v in anteriores.items()
+                                     if k.startswith(emp["id"] + "|") and (v or {}).get("comprovante", {}).get("nome", "").startswith("Consulta consolidada TCU")), None)
+                    if f"pdf_{cnpj}" not in tcu_cache:
+                        comp = comp_ant
+                        if not comp or def_dias_desde(comp.get("emissao")) >= 7:
+                            pdf = tcu_pdf(cnpj)
+                            if pdf:
+                                comp = salvar_pdf(pdf, f"{emp['id']}_tcu", "Consulta consolidada TCU (CEIS, CNEP, CNJ)", hoje().isoformat())
+                        tcu_cache[f"pdf_{cnpj}"] = comp
                     item = tcu_cache[cnpj].get(cert["tcu_chave"])
                     if not item:
                         raise RuntimeError("Cadastro não veio na resposta do TCU")
                     if "erro" in item:
                         raise RuntimeError(item["erro"])
                     novo = dict(item)
+                    if tcu_cache.get(f"pdf_{cnpj}"):
+                        novo["comprovante"] = tcu_cache[f"pdf_{cnpj}"]
                 novo["consultado_em"] = agora_iso()
                 resultados[chave] = novo
                 resumo["consultadas"] += 1
