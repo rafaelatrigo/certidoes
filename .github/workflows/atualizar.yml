@@ -44,5 +44,8 @@ jobs:
             echo "Nada mudou."
           else
             git commit -m "Atualização das certidões $(TZ=America/Sao_Paulo date +'%d/%m/%Y %H:%M')"
-            git push
+            for i in 1 2 3 4 5; do
+              git pull --rebase -X theirs origin main && git push && break
+              echo "Tentando publicar de novo ($i)..."; sleep $((i * 10))
+            done
           fi
