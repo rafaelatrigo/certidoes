@@ -194,11 +194,12 @@ main.gutter { padding-block: 22px 56px; }
 .painel-fundo { position: fixed; inset: 0; background: rgba(10,12,14,.4); z-index: 20; }
 .painel { position: fixed; top: 0; right: 0; bottom: 0; width: min(480px, 100%); background: var(--surface); z-index: 21; border-left: 1px solid var(--line); box-shadow: var(--shadow); display: grid; grid-template-rows: auto 1fr; padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); padding-right: env(safe-area-inset-right, 0px); }
 .painel header { padding: 18px 20px; border-bottom: 1px solid var(--line); display: flex; justify-content: space-between; gap: 12px; align-items: flex-start; }
-.painel .corpo { overflow: auto; padding: 16px 20px 24px; display: grid; gap: 14px; align-content: start; }
+.painel .corpo { overflow-y: auto; min-height: 0; padding: 16px 20px 24px; display: flex; flex-direction: column; gap: 14px; }
+.painel .corpo > * { flex-shrink: 0; }
 .painel dl { margin: 0; display: grid; grid-template-columns: 120px minmax(0,1fr); gap: 6px 12px; font-size: 13.5px; }
 .painel dt { color: var(--muted); }
 .painel dd { margin: 0; min-width: 0; overflow-wrap: anywhere; }
-.painel .lista-cnpj { display: grid; gap: 0; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+.painel .lista-cnpj { display: grid; gap: 0; border: 1px solid var(--line); border-radius: 10px; }
 .painel .lista-cnpj > div { display: grid; grid-template-columns: minmax(0,1fr) auto; gap: 4px 10px; padding: 10px 12px; border-top: 1px solid var(--line); font-size: 13px; }
 .painel .lista-cnpj > div:first-child { border-top: 0; }
 .painel .lista-cnpj .det { grid-column: 1 / -1; color: var(--muted); font-size: 12.5px; }
