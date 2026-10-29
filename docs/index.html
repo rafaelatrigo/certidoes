@@ -6,116 +6,143 @@
 <title>Certidões Carozzo</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="marca/logo-carozzo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=Public+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600&family=Public+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
 <style>
-/* Layout: cabeçalho com resumo → fila "precisa de atenção" → matriz certidão × CNPJ com detalhe em painel lateral.
-   Direção: papel de cartório e tinta de carimbo azul; cor semântica só no estado das certidões. */
+/* ===== MARCA CAROZZO — ajuste as cores aqui =====
+   Paleta neutra: grafite como cor principal, pedra/areia como apoio.
+   Layout: barra da marca → abas (Situação | Levantamento) → resumo → detalhe. */
 :root {
-  --bg: #f5f6f8;
+  --marca-grafite: #24272a;    /* cor principal (cabeçalho, botões) */
+  --marca-pedra:   #8c8579;    /* cor de apoio (detalhes, linhas de destaque) */
+  --marca-areia:   #e9e6e0;    /* fundo de destaque suave */
+
+  --bg: #f4f4f2;
   --surface: #ffffff;
-  --surface-2: #eef1f5;
-  --line: #dde2ea;
-  --fg: #16202e;
-  --muted: #5b6676;
-  --accent: #2346c4;          /* tinta de carimbo */
-  --accent-soft: #e6ebfb;
-  --ok: #17784a;    --ok-bg: #e3f3ea;
-  --cpen: #0f6f78;  --cpen-bg: #dff1f2;
-  --warn: #9a5b00;  --warn-bg: #fdf0d9;
-  --bad: #b4232c;   --bad-bg: #fbe4e5;
-  --info: #5b6676;  --info-bg: #eceff3;
-  --shadow: 0 1px 2px rgba(22,32,46,.06), 0 8px 24px rgba(22,32,46,.06);
-  --f-display: "Bricolage Grotesque", "Public Sans", system-ui, sans-serif;
+  --surface-2: #efeeeb;
+  --line: #dddbd6;
+  --fg: #1f2226;
+  --muted: #676a6d;
+  --accent: var(--marca-grafite);
+  --accent-fg: #ffffff;
+  --accent-soft: var(--marca-areia);
+  --topo-bg: var(--marca-grafite);
+  --topo-fg: #f4f2ee;
+  --ok: #1d7a4c;    --ok-bg: #e2f2e8;
+  --cpen: #11707a;  --cpen-bg: #def0f2;
+  --warn: #965a07;  --warn-bg: #fbefd9;
+  --bad: #b02a30;   --bad-bg: #fae3e4;
+  --info: #676a6d;  --info-bg: #ecebe8;
+  --blue: #2c63b8;  --violet: #7a52c0;
+  --shadow: 0 1px 2px rgba(31,34,38,.05), 0 8px 22px rgba(31,34,38,.06);
+  --f-marca: "Jost", "Public Sans", system-ui, sans-serif;
   --f-body: "Public Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
-  --f-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --f-mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --bg: #0f141c; --surface: #161d28; --surface-2: #1c2532; --line: #2a3443;
-    --fg: #e6ebf2; --muted: #9aa5b5; --accent: #8aa4ff; --accent-soft: #1f2a4a;
-    --ok: #5fd29a; --ok-bg: #133325; --cpen: #5ccfd8; --cpen-bg: #11303a;
-    --warn: #f2b65a; --warn-bg: #3a2a10; --bad: #ff8088; --bad-bg: #3d1a1e;
-    --info: #9aa5b5; --info-bg: #222b38; --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.25);
+    --bg: #141618; --surface: #1b1e21; --surface-2: #22262a; --line: #2f3439;
+    --fg: #e8e7e3; --muted: #a2a3a2; --accent: #e8e5df; --accent-fg: #1b1e21; --accent-soft: #2b2d2f;
+    --topo-bg: #0f1112; --topo-fg: #ece9e3;
+    --ok: #63d19b; --ok-bg: #143224; --cpen: #5fcdd6; --cpen-bg: #113038;
+    --warn: #efb45c; --warn-bg: #3a2a11; --bad: #ff8a8f; --bad-bg: #3d1c1f;
+    --info: #a2a3a2; --info-bg: #262a2e; --blue: #86aef0; --violet: #b79bef;
+    --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 22px rgba(0,0,0,.25);
     color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
-  --bg: #0f141c; --surface: #161d28; --surface-2: #1c2532; --line: #2a3443;
-  --fg: #e6ebf2; --muted: #9aa5b5; --accent: #8aa4ff; --accent-soft: #1f2a4a;
-  --ok: #5fd29a; --ok-bg: #133325; --cpen: #5ccfd8; --cpen-bg: #11303a;
-  --warn: #f2b65a; --warn-bg: #3a2a10; --bad: #ff8088; --bad-bg: #3d1a1e;
-  --info: #9aa5b5; --info-bg: #222b38; --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.25);
+  --bg: #141618; --surface: #1b1e21; --surface-2: #22262a; --line: #2f3439;
+  --fg: #e8e7e3; --muted: #a2a3a2; --accent: #e8e5df; --accent-fg: #1b1e21; --accent-soft: #2b2d2f;
+  --topo-bg: #0f1112; --topo-fg: #ece9e3;
+  --ok: #63d19b; --ok-bg: #143224; --cpen: #5fcdd6; --cpen-bg: #113038;
+  --warn: #efb45c; --warn-bg: #3a2a11; --bad: #ff8a8f; --bad-bg: #3d1c1f;
+  --info: #a2a3a2; --info-bg: #262a2e; --blue: #86aef0; --violet: #b79bef;
+  --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 22px rgba(0,0,0,.25);
   color-scheme: dark;
 }
 * { box-sizing: border-box; }
 html, body { margin: 0; }
 [hidden] { display: none !important; }
-body {
-  background: var(--bg); color: var(--fg);
-  font: 15px/1.5 var(--f-body);
-  padding-left: max(16px, env(safe-area-inset-left, 0px));
-  padding-right: max(16px, env(safe-area-inset-right, 0px));
-  padding-block: 24px 48px;
-}
+body { background: var(--bg); color: var(--fg); font: 15px/1.5 var(--f-body); }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--topo-bg); }
+.gutter { padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
 .wrap { max-width: 1320px; margin: 0 auto; display: grid; gap: 24px; }
-h1, h2, h3 { font-family: var(--f-display); text-wrap: balance; margin: 0; letter-spacing: -.01em; }
-h1 { font-size: clamp(26px, 3.2vw, 34px); line-height: 1.1; }
+h1, h2 { font-family: var(--f-marca); font-weight: 500; text-wrap: balance; margin: 0; letter-spacing: .005em; }
+h1 { font-size: clamp(24px, 3vw, 32px); line-height: 1.15; }
 h2 { font-size: 19px; }
-.eyebrow { font-size: 11.5px; letter-spacing: .09em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+p { margin: 0; }
+.eyebrow { font-size: 11.5px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
 .mono { font-family: var(--f-mono); font-variant-numeric: tabular-nums; }
 button { font: inherit; color: inherit; }
-:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+:focus-visible { outline: 2px solid var(--marca-pedra); outline-offset: 2px; border-radius: 4px; }
+
+/* ---------- barra da marca ---------- */
+.topo { background: var(--topo-bg); color: var(--topo-fg); position: sticky; top: env(safe-area-inset-top, 0px); z-index: 9; }
+.topo .wrap { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-block: 14px; grid-template-columns: none; }
+.marca { display: flex; align-items: center; gap: 14px; min-width: 0; }
+.marca img { height: 30px; width: auto; display: block; }
+.marca .wordmark { font-family: var(--f-marca); font-weight: 500; letter-spacing: .32em; font-size: 18px; }
+.marca .sep { width: 1px; height: 22px; background: currentColor; opacity: .3; }
+.marca .produto { font-size: 13px; letter-spacing: .08em; text-transform: uppercase; opacity: .8; white-space: nowrap; }
+.sair { background: none; border: 1px solid rgba(255,255,255,.3); color: var(--topo-fg); border-radius: 6px; padding: 6px 12px; font-size: 13px; cursor: pointer; }
+
+main.gutter { padding-block: 24px 48px; }
 
 /* ---------- login ---------- */
-.login { min-height: 70vh; display: grid; place-items: center; }
-.login form { width: min(380px, 100%); background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 28px; display: grid; gap: 14px; box-shadow: var(--shadow); }
-.login .selo { width: 52px; height: 52px; border-radius: 50%; border: 2px solid var(--accent); color: var(--accent); display: grid; place-items: center; font: 700 11px/1 var(--f-mono); letter-spacing: .05em; transform: rotate(-8deg); }
+.login { min-height: 72vh; display: grid; place-items: center; }
+.login form { width: min(380px, 100%); background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 28px; display: grid; gap: 14px; box-shadow: var(--shadow); }
+.login .marca-login { display: flex; align-items: center; gap: 10px; color: var(--fg); }
+.login .marca-login img { height: 34px; }
 .login label { font-weight: 600; font-size: 13px; }
 .login input { width: 100%; padding: 11px 12px; border-radius: 8px; border: 1px solid var(--line); background: var(--surface-2); color: var(--fg); font: inherit; }
-.btn { border: 0; border-radius: 8px; padding: 10px 14px; font-weight: 600; cursor: pointer; background: var(--accent); color: #fff; }
-:root[data-theme="dark"] .btn { color: #0f141c; }
-@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .btn { color: #0f141c; } }
+.btn { border: 0; border-radius: 8px; padding: 10px 14px; font-weight: 600; cursor: pointer; background: var(--accent); color: var(--accent-fg); text-decoration: none; display: inline-block; }
 .btn-ghost { background: transparent; border: 1px solid var(--line); color: var(--fg); }
 .erro-login { color: var(--bad); font-size: 13px; min-height: 1.2em; }
 
-/* ---------- topo ---------- */
-.demo { background: var(--warn-bg); color: var(--warn); border-radius: 10px; padding: 10px 14px; font-weight: 600; font-size: 13.5px; }
-.topo { display: flex; flex-wrap: wrap; gap: 16px 32px; align-items: flex-end; justify-content: space-between; }
-.topo .meta { display: flex; flex-wrap: wrap; gap: 6px 18px; color: var(--muted); font-size: 13px; }
-.topo .meta b { color: var(--fg); font-weight: 600; }
+/* ---------- cabeçalho e abas ---------- */
+.cab { display: flex; flex-wrap: wrap; gap: 12px 32px; align-items: flex-end; justify-content: space-between; }
+.cab .meta { display: flex; flex-wrap: wrap; gap: 4px 18px; color: var(--muted); font-size: 13px; }
+.cab .meta b { color: var(--fg); font-weight: 600; }
+.abas { display: flex; gap: 4px; border-bottom: 1px solid var(--line); overflow-x: auto; }
+.abas button { background: none; border: 0; border-bottom: 2px solid transparent; padding: 10px 14px; cursor: pointer; font-weight: 600; color: var(--muted); white-space: nowrap; }
+.abas button[aria-selected="true"] { color: var(--fg); border-bottom-color: var(--marca-pedra); }
+.lead { color: var(--muted); max-width: 78ch; }
+.lead b { color: var(--fg); }
 
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; }
+.card-pad { padding: 18px; display: grid; gap: 14px; min-width: 0; }
+
+/* ---------- resumo ---------- */
 .resumo { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; }
-.tile { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; display: grid; gap: 2px; cursor: pointer; text-align: left; }
-.tile[aria-pressed="true"] { outline: 2px solid var(--accent); outline-offset: -1px; }
-.tile .n { font: 700 30px/1.1 var(--f-display); font-variant-numeric: tabular-nums; }
+.tile { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; display: grid; gap: 2px; cursor: pointer; text-align: left; }
+.tile[aria-pressed="true"] { outline: 2px solid var(--marca-pedra); outline-offset: -1px; }
+.tile .n { font: 500 30px/1.1 var(--f-marca); font-variant-numeric: tabular-nums; }
 .tile .l { font-size: 13px; color: var(--muted); display: flex; align-items: center; gap: 7px; }
 .dot { width: 9px; height: 9px; border-radius: 50%; flex: none; background: currentColor; }
 
-/* ---------- atenção ---------- */
-.atencao { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; }
 .atencao header { display: flex; justify-content: space-between; gap: 12px; align-items: baseline; padding: 14px 18px; border-bottom: 1px solid var(--line); flex-wrap: wrap; }
 .atencao ul { list-style: none; margin: 0; padding: 0; max-height: 320px; overflow: auto; }
-.atencao li button { width: 100%; border: 0; background: none; text-align: left; cursor: pointer; display: grid; grid-template-columns: 120px minmax(0,1fr) auto; gap: 12px; align-items: center; padding: 10px 18px; border-bottom: 1px solid var(--line); }
+.atencao li button { width: 100%; border: 0; background: none; text-align: left; cursor: pointer; display: grid; grid-template-columns: 150px minmax(0,1fr) auto; gap: 12px; align-items: center; padding: 10px 18px; border-bottom: 1px solid var(--line); }
 .atencao li:last-child button { border-bottom: 0; }
 .atencao li button:hover { background: var(--surface-2); }
 .atencao .quem { font-size: 13px; color: var(--muted); min-width: 0; }
 .atencao .quem b { color: var(--fg); font-weight: 600; display: block; }
 .vazio { padding: 18px; color: var(--muted); }
 
-/* ---------- filtros ---------- */
 .filtros { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
 .chip { border: 1px solid var(--line); background: var(--surface); border-radius: 999px; padding: 6px 12px; font-size: 13px; cursor: pointer; }
-.chip[aria-pressed="true"] { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); font-weight: 600; }
-.filtros .sep { width: 1px; height: 22px; background: var(--line); margin: 0 4px; }
-.filtros input { border: 1px solid var(--line); background: var(--surface); color: var(--fg); border-radius: 999px; padding: 6px 12px; font: inherit; font-size: 13px; min-width: 0; width: 220px; max-width: 100%; }
+.chip[aria-pressed="true"] { background: var(--accent-soft); border-color: var(--marca-pedra); font-weight: 600; }
+.filtros input { border: 1px solid var(--line); background: var(--surface); color: var(--fg); border-radius: 999px; padding: 6px 12px; font: inherit; font-size: 13px; width: 220px; max-width: 100%; }
 
-/* ---------- matriz ---------- */
-.matriz-box { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; overflow: auto; box-shadow: var(--shadow); max-height: 78vh; }
+/* ---------- tabelas ---------- */
+.tbox { overflow: auto; max-height: 78vh; border-radius: 12px; background: var(--surface); border: 1px solid var(--line); box-shadow: var(--shadow); }
 table { border-collapse: separate; border-spacing: 0; width: 100%; font-size: 13px; }
 th, td { border-bottom: 1px solid var(--line); padding: 8px 10px; vertical-align: middle; }
-thead th { position: sticky; top: 0; z-index: 3; background: var(--surface); text-align: left; font-weight: 600; vertical-align: bottom; min-width: 132px; }
+thead th { position: sticky; top: 0; z-index: 3; background: var(--surface); text-align: left; font-weight: 600; vertical-align: bottom; }
+#matriz thead th { min-width: 132px; }
 thead th .emp { display: block; font-size: 12.5px; line-height: 1.25; }
 thead th .cnpj { display: block; font: 500 11px/1.4 var(--f-mono); color: var(--muted); margin-top: 2px; }
 thead th .tipo { display: inline-block; font-size: 10.5px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); margin-top: 3px; }
@@ -124,40 +151,62 @@ thead th.cert { z-index: 4; }
 td.cert .nome { font-weight: 600; display: block; line-height: 1.3; }
 td.cert .orgao { color: var(--muted); font-size: 12px; display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
 .fonte { font: 500 10px/1 var(--f-mono); text-transform: uppercase; letter-spacing: .05em; padding: 3px 5px; border-radius: 4px; background: var(--surface-2); color: var(--muted); }
-.fonte.auto { background: var(--accent-soft); color: var(--accent); }
-tr.grupo td { background: var(--surface-2); font: 600 11.5px/1 var(--f-body); letter-spacing: .09em; text-transform: uppercase; color: var(--muted); padding: 9px 10px; position: sticky; left: 0; }
+.fonte.auto { background: var(--ok-bg); color: var(--ok); }
+tr.grupo td { background: var(--surface-2); font: 600 11.5px/1 var(--f-body); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); padding: 9px 10px; }
 .cel { width: 100%; border: 0; background: none; padding: 0; cursor: pointer; text-align: left; display: grid; gap: 3px; }
-.cel:hover .pill { filter: brightness(.96); box-shadow: 0 0 0 1px currentColor inset; }
+.cel:hover .pill { box-shadow: 0 0 0 1px currentColor inset; }
 .pill { display: inline-flex; align-items: center; gap: 6px; border-radius: 6px; padding: 4px 8px; font-weight: 600; font-size: 12px; white-space: nowrap; width: max-content; }
-.data { font: 400 11.5px/1.2 var(--f-mono); color: var(--muted); font-variant-numeric: tabular-nums; }
+.data { font: 400 11.5px/1.2 var(--f-mono); color: var(--muted); }
 .herdado { font-size: 11px; color: var(--muted); }
 .aviso-falha { color: var(--warn); font-size: 11px; }
-.s-regular  { color: var(--ok);   background: var(--ok-bg); }
-.s-cpen     { color: var(--cpen); background: var(--cpen-bg); }
-.s-avencer  { color: var(--warn); background: var(--warn-bg); }
+.s-regular { color: var(--ok); background: var(--ok-bg); }
+.s-cpen { color: var(--cpen); background: var(--cpen-bg); }
+.s-avencer, .s-falha, .s-verificar { color: var(--warn); background: var(--warn-bg); }
 .s-vencida, .s-pendencia { color: var(--bad); background: var(--bad-bg); }
-.s-falha, .s-verificar { color: var(--warn); background: var(--warn-bg); }
-.s-semreg, .s-token, .s-na, .s-desat { color: var(--info); background: var(--info-bg); }
-.s-pendencia .dot, .s-vencida .dot { box-shadow: 0 0 0 3px color-mix(in srgb, currentColor 20%, transparent); }
+.s-semreg, .s-na, .s-desat { color: var(--info); background: var(--info-bg); }
 
-/* ---------- painel de detalhe ---------- */
-.painel-fundo { position: fixed; inset: 0; background: rgba(10,14,20,.38); z-index: 20; }
+/* ---------- levantamento ---------- */
+.barra { display: flex; height: 28px; border-radius: 6px; overflow: hidden; gap: 2px; }
+.barra span { display: block; height: 100%; min-width: 4px; }
+.lev-tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 14px; }
+.lev-tile { border-top: 3px solid var(--c); padding-top: 8px; display: grid; gap: 2px; }
+.lev-tile .n { font: 500 28px/1.1 var(--f-marca); font-variant-numeric: tabular-nums; }
+.lev-tile .l { font-weight: 600; font-size: 14px; }
+.lev-tile .s { font-size: 12.5px; color: var(--muted); line-height: 1.4; }
+.r-consultado { --c: var(--ok); color: var(--ok); }
+.r-indisp { --c: var(--warn); color: var(--warn); }
+.r-viavel { --c: var(--blue); color: var(--blue); }
+.r-semi { --c: var(--violet); color: var(--violet); }
+.r-manual { --c: var(--marca-pedra); color: var(--muted); }
+.r-nao { --c: var(--bad); color: var(--bad); }
+.lev-tile.r-consultado, .lev-tile.r-indisp, .lev-tile.r-viavel, .lev-tile.r-semi, .lev-tile.r-manual, .lev-tile.r-nao { color: var(--fg); }
+.tag-r { display: inline-block; border: 1px solid currentColor; border-radius: 999px; padding: 2px 9px; font-weight: 600; font-size: 12px; white-space: nowrap; }
+.tag { display: inline-block; border-radius: 4px; padding: 1px 6px; background: var(--surface-2); border: 1px solid var(--line); white-space: nowrap; font-size: 12px; }
+#lev-tabela td { vertical-align: top; line-height: 1.45; }
+#lev-tabela td.k { font-weight: 600; min-width: 12rem; }
+#lev-tabela td.why { min-width: 16rem; max-width: 26rem; color: var(--muted); }
+#lev-tabela td.how { min-width: 14rem; max-width: 22rem; }
+.duas { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr)); gap: 14px; }
+.duas ul { margin: 0; padding-left: 1.1rem; display: grid; gap: 6px; line-height: 1.5; }
+
+/* ---------- painel lateral ---------- */
+.painel-fundo { position: fixed; inset: 0; background: rgba(10,12,14,.4); z-index: 20; }
 .painel { position: fixed; top: 0; right: 0; bottom: 0; width: min(440px, 100%); background: var(--surface); z-index: 21; border-left: 1px solid var(--line); box-shadow: var(--shadow); display: grid; grid-template-rows: auto 1fr; padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); padding-right: env(safe-area-inset-right, 0px); }
 .painel header { padding: 18px 20px; border-bottom: 1px solid var(--line); display: flex; justify-content: space-between; gap: 12px; align-items: flex-start; }
-.painel .corpo { overflow: auto; padding: 18px 20px; display: grid; gap: 18px; align-content: start; }
+.painel .corpo { overflow: auto; padding: 18px 20px; display: grid; gap: 16px; align-content: start; }
 .painel dl { margin: 0; display: grid; grid-template-columns: 130px minmax(0,1fr); gap: 8px 12px; font-size: 13.5px; }
 .painel dt { color: var(--muted); }
 .painel dd { margin: 0; min-width: 0; overflow-wrap: anywhere; }
 .acoes { display: flex; flex-wrap: wrap; gap: 8px; }
-.acoes a { text-decoration: none; display: inline-block; }
 .nota { font-size: 13px; color: var(--muted); background: var(--surface-2); border-radius: 8px; padding: 10px 12px; }
 .fechar { border: 1px solid var(--line); background: var(--surface); border-radius: 8px; width: 34px; height: 34px; cursor: pointer; flex: none; }
+.rodape { color: var(--muted); font-size: 12.5px; display: flex; flex-wrap: wrap; gap: 6px 18px; }
 
-footer.rodape { color: var(--muted); font-size: 12.5px; display: flex; flex-wrap: wrap; gap: 6px 18px; }
-@media (max-width: 640px) {
+@media (max-width: 720px) {
   .atencao li button { grid-template-columns: minmax(0,1fr); gap: 4px; }
   th.cert, td.cert { min-width: 170px; }
-  .painel dl { grid-template-columns: 110px minmax(0,1fr); }
+  .hide-sm { display: none; }
+  .marca .produto, .marca .sep { display: none; }
 }
 @media (prefers-reduced-motion: no-preference) {
   .painel:not([hidden]) { animation: entra .18s ease-out; }
@@ -166,74 +215,123 @@ footer.rodape { color: var(--muted); font-size: 12.5px; display: flex; flex-wrap
 </style>
 </head>
 <body>
-<div class="wrap">
 
-  <section class="login" id="tela-login" hidden>
-    <form id="form-login" autocomplete="off">
-      <div class="selo">CND</div>
-      <div>
+<div class="topo">
+  <div class="wrap gutter">
+    <div class="marca">
+      <img src="marca/logo-carozzo.png" alt="Carozzo" id="logo-topo">
+      <span class="wordmark" id="wm-topo" hidden>CAROZZO</span>
+      <span class="sep" aria-hidden="true"></span>
+      <span class="produto">Controle de certidões</span>
+    </div>
+    <button class="sair" type="button" id="btn-sair" hidden>Sair</button>
+  </div>
+</div>
+
+<main class="gutter">
+  <div class="wrap">
+
+    <section class="login" id="tela-login" hidden>
+      <form id="form-login" autocomplete="off">
         <div class="eyebrow">Grupo Carozzo · uso interno</div>
         <h1>Certidões</h1>
-      </div>
-      <label for="senha">Senha da equipe</label>
-      <input id="senha" type="password" required autocomplete="current-password">
-      <button class="btn" type="submit" id="btn-entrar">Entrar</button>
-      <div class="erro-login" id="erro-login" role="alert"></div>
-    </form>
-  </section>
+        <label for="senha">Senha da equipe</label>
+        <input id="senha" type="password" required autocomplete="current-password">
+        <button class="btn" type="submit" id="btn-entrar">Entrar</button>
+        <div class="erro-login" id="erro-login" role="alert"></div>
+      </form>
+    </section>
 
-  <main id="app" hidden>
-    <div class="wrap">
-      <div class="demo" id="faixa-demo" hidden>Dados de demonstração: situações simuladas para mostrar a tela. Nenhuma certidão real foi consultada.</div>
-
-      <div class="topo">
+    <div id="app" class="wrap" hidden>
+      <div class="cab">
         <div>
-          <div class="eyebrow">Grupo Carozzo · controle de regularidade</div>
-          <h1>Certidões das empresas e SPEs</h1>
+          <div class="eyebrow">Grupo Carozzo · regularidade das empresas e SPEs</div>
+          <h1>Certidões</h1>
         </div>
         <div class="meta" id="meta"></div>
       </div>
 
-      <div class="resumo" id="resumo" role="group" aria-label="Resumo por situação"></div>
+      <div class="abas" role="tablist">
+        <button role="tab" type="button" id="tab-situacao" aria-selected="true" aria-controls="aba-situacao">Situação das certidões</button>
+        <button role="tab" type="button" id="tab-levantamento" aria-selected="false" aria-controls="aba-levantamento">O que a IA consegue fazer</button>
+      </div>
 
-      <section class="atencao" aria-labelledby="t-atencao">
-        <header>
-          <h2 id="t-atencao">Precisa de atenção</h2>
-          <span class="eyebrow" id="cont-atencao"></span>
-        </header>
-        <ul id="lista-atencao"></ul>
+      <!-- ===== ABA 1: SITUAÇÃO ===== -->
+      <section id="aba-situacao" role="tabpanel" aria-labelledby="tab-situacao" class="wrap">
+        <div class="resumo" id="resumo" role="group" aria-label="Resumo por situação"></div>
+
+        <section class="card atencao" aria-labelledby="t-atencao">
+          <header><h2 id="t-atencao">Precisa de atenção</h2><span class="eyebrow" id="cont-atencao"></span></header>
+          <ul id="lista-atencao"></ul>
+        </section>
+
+        <div class="filtros" id="filtros">
+          <span class="eyebrow">Mostrar</span>
+          <button class="chip" type="button" data-f="todas" aria-pressed="false">Todas</button>
+          <button class="chip" type="button" data-f="auto" aria-pressed="true">Só automáticas</button>
+          <button class="chip" type="button" data-f="manual" aria-pressed="false">Só manuais</button>
+          <label for="busca" class="eyebrow">Buscar</label>
+          <input id="busca" type="search" placeholder="certidão, empresa ou CNPJ">
+        </div>
+
+        <div class="tbox"><table id="matriz" aria-label="Situação de cada certidão por CNPJ"></table></div>
+        <footer class="rodape" id="rodape"></footer>
       </section>
 
-      <div class="filtros" id="filtros">
-        <span class="eyebrow">Mostrar</span>
-        <button class="chip" type="button" data-f="todas" aria-pressed="true">Todas</button>
-        <button class="chip" type="button" data-f="auto" aria-pressed="false">Só automáticas</button>
-        <button class="chip" type="button" data-f="manual" aria-pressed="false">Só manuais</button>
-        <span class="sep" aria-hidden="true"></span>
-        <label for="busca" class="eyebrow">Buscar</label>
-        <input id="busca" type="search" placeholder="certidão, empresa ou CNPJ">
-      </div>
+      <!-- ===== ABA 2: LEVANTAMENTO ===== -->
+      <section id="aba-levantamento" role="tabpanel" aria-labelledby="tab-levantamento" class="wrap" hidden>
+        <p class="lead" id="lev-lead"></p>
+        <div class="card card-pad">
+          <h2>O que a IA consegue fazer, por certidão</h2>
+          <div class="barra" id="lev-barra" role="img" aria-label="Distribuição das certidões pelo que a IA consegue fazer"></div>
+          <div class="lev-tiles" id="lev-tiles"></div>
+        </div>
 
-      <div class="matriz-box">
-        <table id="matriz" aria-label="Situação de cada certidão por CNPJ"></table>
-      </div>
+        <div class="filtros" id="lev-filtros"></div>
+        <div class="tbox">
+          <table id="lev-tabela">
+            <thead><tr>
+              <th>Certidão</th><th>Situação com IA</th><th>Custo</th><th>O que trava</th>
+              <th>Por quê</th><th>Como fazer sem pagar sistema</th><th class="hide-sm">Órgão</th>
+            </tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
 
-      <footer class="rodape" id="rodape"></footer>
+        <div class="duas">
+          <div class="card card-pad">
+            <h2>Por que a IA não emite tudo sozinha</h2>
+            <ul>
+              <li><b>Captcha.</b> Receita, TST, TRF1, TRT5 e CGU pedem captcha para emitir. O captcha existe para barrar robôs, e contorná-lo fere os termos de uso dos órgãos.</li>
+              <li><b>Login e certificado digital.</b> CADIN, CND de obra e SPU só abrem com gov.br ou certificado da empresa. A IA não guarda nem usa essas credenciais.</li>
+              <li><b>Taxas.</b> Matrícula, ônus reais, JUCEB e certidão de protesto têm emolumentos cobrados pelo cartório ou pela junta, com ou sem sistema.</li>
+              <li><b>Birôs.</b> Serasa, SPC, Boa Vista e Quod só vendem consulta com contrato.</li>
+            </ul>
+          </div>
+          <div class="card card-pad">
+            <h2>Como os serviços pagos emitem tudo</h2>
+            <ul>
+              <li>Usam robôs que abrem o site do órgão e preenchem o formulário, como uma pessoa faria.</li>
+              <li>Pagam serviços de resolução de captcha e repassam o custo por certidão.</li>
+              <li>Trabalham com o certificado digital ou a procuração do cliente para entrar no e-CAC.</li>
+              <li>Pagam os emolumentos de cartório e cobram de volta.</li>
+              <li>A IA entra depois: lê o PDF, confere CNPJ, validade e resultado, e organiza tudo num painel.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
     </div>
-  </main>
+  </div>
+</main>
 
-  <div class="painel-fundo" id="fundo" hidden></div>
-  <aside class="painel" id="painel" hidden role="dialog" aria-modal="true" aria-labelledby="p-titulo">
-    <header>
-      <div>
-        <div class="eyebrow" id="p-emp"></div>
-        <h2 id="p-titulo"></h2>
-      </div>
-      <button class="fechar" type="button" id="p-fechar" aria-label="Fechar">✕</button>
-    </header>
-    <div class="corpo" id="p-corpo"></div>
-  </aside>
-</div>
+<div class="painel-fundo" id="fundo" hidden></div>
+<aside class="painel" id="painel" hidden role="dialog" aria-modal="true" aria-labelledby="p-titulo">
+  <header>
+    <div><div class="eyebrow" id="p-emp"></div><h2 id="p-titulo"></h2></div>
+    <button class="fechar" type="button" id="p-fechar" aria-label="Fechar">✕</button>
+  </header>
+  <div class="corpo" id="p-corpo"></div>
+</aside>
 
 <script>
 (() => {
@@ -241,7 +339,10 @@ footer.rodape { color: var(--muted); font-size: 12.5px; display: flex; flex-wrap
   const $ = (s) => document.querySelector(s);
   const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   const CHAVE_SESSAO = "certidoes-carozzo-senha";
-  let DADOS = null, SENHA = null, filtroSit = null, filtroFonte = "todas", termo = "";
+  let DADOS = null, filtroSit = null, filtroFonte = "auto", termo = "", filtroLev = "";
+
+  // Logo: se o arquivo marca/logo-carozzo.png não existir, mostra o nome por extenso.
+  $("#logo-topo").addEventListener("error", () => { $("#logo-topo").hidden = true; $("#wm-topo").hidden = false; });
 
   // ---------------- criptografia (espelha robo/cripto.py) ----------------
   const b64 = (s) => Uint8Array.from(atob(s), (c) => c.charCodeAt(0));
@@ -260,29 +361,26 @@ footer.rodape { color: var(--muted); font-size: 12.5px; display: flex; flex-wrap
   const br = (iso) => { const d = dt(iso); return d ? d.toLocaleDateString("pt-BR") : "—"; };
   const dias = (iso) => Math.round((dt(iso) - hoje()) / 864e5);
 
-  // ---------------- situação → estado visual ----------------
+  // ---------------- estados ----------------
   const ESTADOS = {
-    regular:   { r: "Regular",            c: "s-regular",  ordem: 6 },
-    cpen:      { r: "Regular c/ ressalva", c: "s-cpen",    ordem: 5 },
-    avencer:   { r: "Vence em breve",     c: "s-avencer",  ordem: 3 },
-    vencida:   { r: "Vencida",            c: "s-vencida",  ordem: 1 },
-    pendencia: { r: "Com pendência",      c: "s-pendencia",ordem: 0 },
-    verificar: { r: "Verificar",          c: "s-verificar",ordem: 2 },
-    falha:     { r: "Falha na consulta",  c: "s-falha",    ordem: 2 },
-    desat:     { r: "Desatualizada",      c: "s-desat",    ordem: 4 },
-    semreg:    { r: "Sem registro",       c: "s-semreg",   ordem: 4 },
-    token:     { r: "Aguardando token",   c: "s-token",    ordem: 7 },
-    na:        { r: "Não aplicável",      c: "s-na",       ordem: 8 },
+    regular:   { r: "Regular",             c: "s-regular",   ordem: 6 },
+    cpen:      { r: "Regular c/ ressalva", c: "s-cpen",      ordem: 5 },
+    avencer:   { r: "Vence em breve",      c: "s-avencer",   ordem: 3 },
+    vencida:   { r: "Vencida",             c: "s-vencida",   ordem: 1 },
+    pendencia: { r: "Com pendência",       c: "s-pendencia", ordem: 0 },
+    verificar: { r: "Verificar",           c: "s-verificar", ordem: 2 },
+    falha:     { r: "Falha na consulta",   c: "s-falha",     ordem: 2 },
+    desat:     { r: "Desatualizada",       c: "s-desat",     ordem: 4 },
+    semreg:    { r: "Sem registro",        c: "s-semreg",    ordem: 4 },
+    na:        { r: "Não aplicável",       c: "s-na",        ordem: 8 },
   };
   const ALERTA_DIAS = 30;
-
   function estadoDe(res) {
     if (!res) return null;
     const s = res.situacao;
     if (s === "positiva") return "pendencia";
     if (s === "erro") return "falha";
     if (s === "sem_registro") return "semreg";
-    if (s === "nao_configurado") return "token";
     if (s === "nao_aplicavel") return "na";
     if (s === "indefinido") return "verificar";
     if (s === "negativa" || s === "cpen") {
@@ -295,17 +393,17 @@ footer.rodape { color: var(--muted); font-size: 12.5px; display: flex; flex-wrap
     }
     return "verificar";
   }
-  function rotulo(est, res) {
+  const rotulo = (est, res) => {
     if (est === "avencer") { const d = dias(res.validade); return d === 0 ? "Vence hoje" : `Vence em ${d} d`; }
+    if (est === "regular" && res.tipo === "consulta") return "Nada consta";
     return ESTADOS[est].r;
-  }
+  };
 
-  // ---------------- montagem ----------------
-  const empresas = () => DADOS.empresas;
-  const certidoes = () => DADOS.certidoes;
   const empPorId = (id) => DADOS.empresas.find((e) => e.id === id);
   const certPorId = (id) => DADOS.certidoes.find((c) => c.id === id);
   const curto = (e) => e.empreendimento.replace("Carozzo Desenvolvimento Imobiliário", "Carozzo Incorporadora").replace(" Residencial", "").replace(" Connected Residence", "");
+  const aplica = (c, e) => !(c.aplica_a && !c.aplica_a.includes(e.id)) && !(c.municipio && c.municipio !== e.municipio);
+  const automatica = (c) => c.fonte !== "manual";
 
   function resolver(empId, certId) {
     let res = DADOS.resultados[`${empId}|${certId}`];
@@ -313,11 +411,10 @@ footer.rodape { color: var(--muted); font-size: 12.5px; display: flex; flex-wrap
     if (res && res.herdado_de) { herdadoDe = res.herdado_de; res = DADOS.resultados[`${res.herdado_de}|${certId}`]; }
     return { res, herdadoDe };
   }
-
   function celulas() {
     const lista = [];
-    for (const c of certidoes()) for (const e of empresas()) {
-      if (c.aplica_a && !c.aplica_a.includes(e.id)) continue;
+    for (const c of DADOS.certidoes) for (const e of DADOS.empresas) {
+      if (!aplica(c, e)) continue;
       const { res, herdadoDe } = resolver(e.id, c.id);
       const est = estadoDe(res);
       if (est) lista.push({ c, e, res, herdadoDe, est });
@@ -325,89 +422,65 @@ footer.rodape { color: var(--muted); font-size: 12.5px; display: flex; flex-wrap
     return lista;
   }
 
+  // ---------------- aba Situação ----------------
   function renderMeta() {
     const at = DADOS.atualizado_em ? new Date(DADOS.atualizado_em) : null;
-    const cons = DADOS.consumo || {};
     $("#meta").innerHTML = [
       at ? `<span>Atualizado em <b>${at.toLocaleDateString("pt-BR")} às ${at.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}</b></span>` : "",
-      `<span><b>${empresas().length}</b> CNPJs monitorados</span>`,
-      DADOS.infosimples_configurado
-        ? `<span>Consultas pagas no mês: <b class="mono">${cons.consultas || 0}</b>${cons.valor ? ` · <b class="mono">R$ ${Number(cons.valor).toFixed(2).replace(".", ",")}</b>` : ""}</span>`
-        : `<span>Emissão automática <b>desligada</b> (falta o token Infosimples)</span>`,
+      `<span><b>${DADOS.empresas.length}</b> CNPJs</span>`,
+      `<span>Consultas automáticas <b>sem custo</b></span>`,
     ].join("");
   }
-
-  const GRUPOS_RESUMO = [
-    { k: "ok", r: "Regulares", cls: "s-regular", ests: ["regular", "cpen"] },
+  const GRUPOS = [
+    { k: "ok", r: "Regulares / nada consta", cls: "s-regular", ests: ["regular", "cpen"] },
     { k: "avencer", r: `Vencem em até ${ALERTA_DIAS} dias`, cls: "s-avencer", ests: ["avencer"] },
     { k: "vencida", r: "Vencidas", cls: "s-vencida", ests: ["vencida"] },
     { k: "pendencia", r: "Com pendência", cls: "s-pendencia", ests: ["pendencia"] },
     { k: "acao", r: "Falha ou verificar", cls: "s-falha", ests: ["falha", "verificar", "desat"] },
-    { k: "semreg", r: "Sem registro (manual)", cls: "s-semreg", ests: ["semreg"] },
+    { k: "semreg", r: "Aguardando lançamento", cls: "s-semreg", ests: ["semreg"] },
   ];
-
   function renderResumo(cels) {
-    const unicos = cels.filter((x) => !x.herdadoDe);
-    $("#resumo").innerHTML = GRUPOS_RESUMO.map((g) => {
-      const n = unicos.filter((x) => g.ests.includes(x.est)).length;
-      const ativo = filtroSit === g.k;
-      return `<button class="tile" type="button" data-g="${g.k}" aria-pressed="${ativo}">
-        <span class="n">${n}</span><span class="l"><span class="dot ${g.cls}" style="background:currentColor"></span>${g.r}</span></button>`;
-    }).join("");
+    const unicos = cels.filter((x) => !x.herdadoDe && passaFonte(x.c));
+    $("#resumo").innerHTML = GRUPOS.map((g) => `<button class="tile" type="button" data-g="${g.k}" aria-pressed="${filtroSit === g.k}">
+      <span class="n">${unicos.filter((x) => g.ests.includes(x.est)).length}</span>
+      <span class="l"><span class="dot ${g.cls}" style="background:currentColor"></span>${g.r}</span></button>`).join("");
     $("#resumo").querySelectorAll(".tile").forEach((b) => b.onclick = () => { filtroSit = filtroSit === b.dataset.g ? null : b.dataset.g; render(); });
   }
-
   function renderAtencao(cels) {
     const alvo = cels.filter((x) => !x.herdadoDe && ["pendencia", "vencida", "avencer", "falha", "verificar", "desat"].includes(x.est))
-      .sort((a, b) => ESTADOS[a.est].ordem - ESTADOS[b.est].ordem || (dias(a.res.validade || "2999-01-01") - dias(b.res.validade || "2999-01-01")));
+      .sort((a, b) => ESTADOS[a.est].ordem - ESTADOS[b.est].ordem || ((a.res.validade ? dias(a.res.validade) : 9e9) - (b.res.validade ? dias(b.res.validade) : 9e9)));
     $("#cont-atencao").textContent = alvo.length ? `${alvo.length} ${alvo.length === 1 ? "item" : "itens"}` : "";
-    $("#lista-atencao").innerHTML = alvo.length ? alvo.map((x, i) => `
-      <li><button type="button" data-i="${i}">
+    $("#lista-atencao").innerHTML = alvo.length ? alvo.map((x, i) => `<li><button type="button" data-i="${i}">
         <span class="pill ${ESTADOS[x.est].c}"><span class="dot"></span>${esc(rotulo(x.est, x.res))}</span>
         <span class="quem"><b>${esc(x.c.nome)}</b>${esc(curto(x.e))} · <span class="mono">${esc(x.e.cnpj)}</span></span>
-        <span class="data">${x.res.validade ? "até " + br(x.res.validade) : ""}</span>
-      </button></li>`).join("")
-      : `<li class="vazio">Nenhuma certidão vencida, a vencer ou com pendência.</li>`;
+        <span class="data">${x.res.validade && x.res.tipo !== "consulta" ? "até " + br(x.res.validade) : ""}</span></button></li>`).join("")
+      : `<li class="vazio">Nada vencido, a vencer, com pendência ou com falha.</li>`;
     $("#lista-atencao").querySelectorAll("button").forEach((b) => { const x = alvo[+b.dataset.i]; b.onclick = () => abrir(x.e.id, x.c.id); });
   }
-
+  const passaFonte = (c) => !(filtroFonte === "auto" && !automatica(c)) && !(filtroFonte === "manual" && automatica(c));
   function passaFiltros(c, e, est) {
-    if (filtroFonte === "auto" && c.fonte === "manual") return false;
-    if (filtroFonte === "manual" && c.fonte !== "manual") return false;
-    if (filtroSit) { const g = GRUPOS_RESUMO.find((g) => g.k === filtroSit); if (!g.ests.includes(est)) return false; }
-    if (termo) {
-      const alvo = `${c.nome} ${c.orgao} ${e.empreendimento} ${e.razao_social} ${e.cnpj} ${e.cnpj.replace(/\D/g, "")}`.toLowerCase();
-      if (!alvo.includes(termo)) return false;
-    }
+    if (!passaFonte(c)) return false;
+    if (filtroSit && !GRUPOS.find((g) => g.k === filtroSit).ests.includes(est)) return false;
+    if (termo && !`${c.nome} ${c.orgao} ${e.empreendimento} ${e.razao_social} ${e.cnpj} ${e.cnpj.replace(/\D/g, "")}`.toLowerCase().includes(termo)) return false;
     return true;
   }
-
   function renderMatriz() {
-    const emps = empresas();
+    const emps = DADOS.empresas;
     let html = `<thead><tr><th class="cert" scope="col"><span class="eyebrow">Certidão</span></th>` +
-      emps.map((e) => `<th scope="col"><span class="emp">${esc(curto(e))}</span><span class="cnpj">${esc(e.cnpj)}</span><span class="tipo">${esc(e.tipo)}</span></th>`).join("") +
-      `</tr></thead><tbody>`;
-    let grupoAtual = null, linhas = 0;
-    for (const c of certidoes()) {
-      const cels = emps.map((e) => {
-        if (c.aplica_a && !c.aplica_a.includes(e.id)) return null;
-        const { res, herdadoDe } = resolver(e.id, c.id);
-        return { e, res, herdadoDe, est: estadoDe(res) };
-      });
-      const visiveis = cels.filter((x) => x && x.est && passaFiltros(c, x.e, x.est));
-      if (!visiveis.length) continue;
-      if (c.grupo !== grupoAtual) { grupoAtual = c.grupo; html += `<tr class="grupo"><td colspan="${emps.length + 1}">${esc(c.grupo)}</td></tr>`; }
-      html += `<tr><td class="cert"><span class="nome">${esc(c.nome)}</span>
-        <span class="orgao">${esc(c.orgao)} <span class="fonte ${c.fonte === "manual" ? "" : "auto"}">${c.fonte === "manual" ? "manual" : "auto"}</span></span></td>`;
+      emps.map((e) => `<th scope="col"><span class="emp">${esc(curto(e))}</span><span class="cnpj">${esc(e.cnpj)}</span><span class="tipo">${esc(e.tipo)}</span></th>`).join("") + `</tr></thead><tbody>`;
+    let grupo = null, linhas = 0;
+    for (const c of DADOS.certidoes) {
+      const cels = emps.map((e) => { if (!aplica(c, e)) return null; const { res, herdadoDe } = resolver(e.id, c.id); return { e, res, herdadoDe, est: estadoDe(res) }; });
+      if (!cels.some((x) => x && x.est && passaFiltros(c, x.e, x.est))) continue;
+      if (c.grupo !== grupo) { grupo = c.grupo; html += `<tr class="grupo"><td colspan="${emps.length + 1}">${esc(grupo)}</td></tr>`; }
+      html += `<tr><td class="cert"><span class="nome">${esc(c.nome)}</span><span class="orgao">${esc(c.orgao)} <span class="fonte ${automatica(c) ? "auto" : ""}">${automatica(c) ? "automática" : "manual"}</span></span></td>`;
       for (const x of cels) {
         if (!x || !x.est) { html += `<td><span class="herdado">não se aplica</span></td>`; continue; }
         if (!passaFiltros(c, x.e, x.est)) { html += `<td></td>`; continue; }
-        const st = ESTADOS[x.est];
-        const venc = x.res.validade && x.res.tipo !== "consulta" ? `<span class="data">até ${br(x.res.validade)}</span>` : (x.res.tipo === "consulta" && x.res.consultado_em ? `<span class="data">consulta ${br(x.res.consultado_em)}</span>` : "");
-        const her = x.herdadoDe ? `<span class="herdado">vale a da ${esc(empPorId(x.herdadoDe).tipo.toLowerCase().includes("matriz") ? "matriz" : "raiz " + empPorId(x.herdadoDe).cnpj)}</span>` : "";
+        const venc = x.res.validade && x.res.tipo !== "consulta" ? `<span class="data">até ${br(x.res.validade)}</span>` : (x.res.consultado_em ? `<span class="data">consulta ${br(x.res.consultado_em)}</span>` : "");
+        const her = x.herdadoDe ? `<span class="herdado">vale a da matriz</span>` : "";
         const falha = x.res.ultima_falha && x.est !== "falha" ? `<span class="aviso-falha">última consulta falhou</span>` : "";
-        html += `<td><button class="cel" type="button" data-e="${x.e.id}" data-c="${c.id}" aria-label="${esc(c.nome)}, ${esc(curto(x.e))}: ${esc(rotulo(x.est, x.res))}">
-          <span class="pill ${st.c}"><span class="dot"></span>${esc(rotulo(x.est, x.res))}</span>${venc}${her}${falha}</button></td>`;
+        html += `<td><button class="cel" type="button" data-e="${x.e.id}" data-c="${c.id}"><span class="pill ${ESTADOS[x.est].c}"><span class="dot"></span>${esc(rotulo(x.est, x.res))}</span>${venc}${her}${falha}</button></td>`;
       }
       html += `</tr>`; linhas++;
     }
@@ -415,24 +488,51 @@ footer.rodape { color: var(--muted); font-size: 12.5px; display: flex; flex-wrap
     $("#matriz").innerHTML = html + "</tbody>";
     $("#matriz").querySelectorAll(".cel").forEach((b) => b.onclick = () => abrir(b.dataset.e, b.dataset.c));
   }
-
   function renderRodape() {
     const ex = DADOS.ultima_execucao || {};
-    $("#rodape").innerHTML = `<span>Última execução do robô: ${ex.consultadas ?? 0} consultas, ${ex.mantidas ?? 0} ainda válidas, ${ex.falhas ?? 0} falhas</span>
-      <span>Alerta “vence em breve”: ${ALERTA_DIAS} dias antes da validade</span>
-      <span>Certidões manuais: edite <span class="mono">dados/manuais.csv</span> no GitHub</span>`;
+    $("#rodape").innerHTML = `<span>Última execução do robô: ${ex.consultadas ?? 0} consultas automáticas, ${ex.falhas ?? 0} falhas</span>
+      <span>Fontes automáticas: Receita Federal (base aberta) e TCU (consulta consolidada)</span>
+      <span>Certidões manuais: lance em <span class="mono">dados/manuais.csv</span> no GitHub</span>`;
+  }
+
+  // ---------------- aba Levantamento ----------------
+  const RES = [
+    { k: "Consultado", r: "Consultado automaticamente", s: "Resultado real, sem custo e sem login", cls: "r-consultado" },
+    { k: "Indisponível no órgão", r: "Fora do ar no órgão", s: "Fonte grátis; o sistema do órgão falha com frequência", cls: "r-indisp" },
+    { k: "Viável sem custo", r: "Automatizável sem custo", s: "Falta construir o robô", cls: "r-viavel" },
+    { k: "Semi-automático", r: "IA preenche, pessoa confirma", s: "Grátis, mas com captcha ou formulário interativo", cls: "r-semi" },
+    { k: "Manual", r: "Manual", s: "Login gov.br, certificado digital ou taxa de cartório", cls: "r-manual" },
+    { k: "Não é possível", r: "Não é possível", s: "Só com contrato pago", cls: "r-nao" },
+  ];
+  function renderLevantamento() {
+    const cs = DADOS.certidoes;
+    const n = (k) => cs.filter((c) => c.ia_resultado === k).length;
+    const pagos = cs.filter((c) => c.custo !== "Grátis").length;
+    const login = cs.filter((c) => ["Login gov.br", "Certificado digital", "Cadastro ONR", "Contrato"].includes(c.acesso)).length;
+    $("#lev-lead").innerHTML = `Levantamento de <b>${cs.length}</b> certidões e consultas. O robô consulta <b>${n("Consultado") + n("Indisponível no órgão")}</b> sozinho, todo dia útil e sem custo. Outras <b>${n("Viável sem custo")}</b> podem ser automatizadas sem custo. <b>${n("Semi-automático")}</b> são gratuitas mas têm captcha ou formulário: a IA preenche e uma pessoa confirma. <b>${pagos}</b> têm custo e <b>${login}</b> exigem login, certificado digital ou contrato.`;
+    $("#lev-barra").innerHTML = RES.map((g) => n(g.k) ? `<span class="${g.cls}" style="flex:${n(g.k)};background:var(--c)" title="${esc(g.r)}: ${n(g.k)} de ${cs.length}"></span>` : "").join("");
+    $("#lev-tiles").innerHTML = RES.map((g) => `<div class="lev-tile ${g.cls}"><span class="n">${n(g.k)}</span><span class="l">${esc(g.r)}</span><span class="s">${esc(g.s)}</span></div>`).join("");
+    $("#lev-filtros").innerHTML = `<span class="eyebrow">Mostrar</span>` + [{ k: "", r: "Todas" }, ...RES].map((g) =>
+      `<button class="chip" type="button" data-k="${esc(g.k)}" aria-pressed="${filtroLev === g.k}">${esc(g.r)}</button>`).join("");
+    $("#lev-filtros").querySelectorAll(".chip").forEach((b) => b.onclick = () => { filtroLev = b.dataset.k; renderLevantamento(); });
+    const ordem = RES.map((g) => g.k);
+    const linhas = cs.filter((c) => !filtroLev || c.ia_resultado === filtroLev).slice().sort((a, b) => ordem.indexOf(a.ia_resultado) - ordem.indexOf(b.ia_resultado));
+    $("#lev-tabela tbody").innerHTML = linhas.map((c) => {
+      const g = RES.find((x) => x.k === c.ia_resultado) || RES[4];
+      const nome = c.link ? `<a href="${esc(c.link)}" target="_blank" rel="noopener" style="color:inherit">${esc(c.nome)}</a>` : esc(c.nome);
+      return `<tr><td class="k">${nome}</td><td><span class="tag-r ${g.cls}">${esc(g.r)}</span></td><td><span class="tag">${esc(c.custo)}</span></td>
+        <td>${esc(c.bloqueio)}</td><td class="why">${esc(c.motivo)}</td><td class="how">${esc(c.como_fazer)}</td><td class="hide-sm">${esc(c.orgao)}</td></tr>`;
+    }).join("");
   }
 
   function render() {
     const cels = celulas();
-    renderMeta(); renderResumo(cels); renderAtencao(cels); renderMatriz(); renderRodape();
+    renderMeta(); renderResumo(cels); renderAtencao(cels); renderMatriz(); renderRodape(); renderLevantamento();
   }
 
-  // ---------------- painel de detalhe ----------------
-  const NOMES_FONTE = { infosimples: "Automática · Infosimples", brasilapi: "Automática · BrasilAPI (gratuita)", transparencia: "Automática · Portal da Transparência (gratuita)" };
-  const NOMES_SIT = { negativa: "Negativa / nada consta", cpen: "Positiva com efeito de negativa", positiva: "Positiva / consta", erro: "Sem resultado (falha)", sem_registro: "Sem lançamento manual", nao_configurado: "Aguardando token", indefinido: "Resultado não reconhecido", nao_aplicavel: "Não aplicável" };
-
-  async function abrir(empId, certId) {
+  // ---------------- detalhe ----------------
+  const NOMES_SIT = { negativa: "Negativa / nada consta", cpen: "Positiva com efeito de negativa", positiva: "Positiva / consta", erro: "Sem resultado (falha)", sem_registro: "Sem lançamento manual", indefinido: "Resultado não reconhecido", nao_aplicavel: "Não aplicável" };
+  function abrir(empId, certId) {
     const e = empPorId(empId), c = certPorId(certId);
     const { res, herdadoDe } = resolver(empId, certId);
     const est = estadoDe(res);
@@ -442,49 +542,27 @@ footer.rodape { color: var(--muted); font-size: 12.5px; display: flex; flex-wrap
       ["Situação", `<span class="pill ${ESTADOS[est].c}"><span class="dot"></span>${esc(rotulo(est, res))}</span>`],
       ["Resultado", esc(NOMES_SIT[res.situacao] || res.situacao)],
       res.emissao ? [res.tipo === "consulta" ? "Consultado em" : "Emissão", `<span class="mono">${br(res.emissao)}</span>`] : null,
-      res.validade && res.tipo !== "consulta" ? ["Validade", `<span class="mono">${br(res.validade)}</span>${res.validade_estimada ? " <span class='herdado'>(estimada pelo prazo padrão)</span>" : ""}`] : null,
-      res.codigo ? ["Código", `<span class="mono">${esc(res.codigo)}</span>`] : null,
-      res.processos != null ? ["Processos", `<span class="mono">${res.processos}</span>`] : null,
-      res.mensagem ? ["Mensagem", esc(res.mensagem)] : null,
+      res.validade && res.tipo !== "consulta" ? ["Validade", `<span class="mono">${br(res.validade)}</span>`] : null,
+      res.mensagem ? ["Detalhe", esc(res.mensagem)] : null,
       ["Órgão", esc(c.orgao)],
-      ["Origem", esc(c.fonte === "manual" ? "Lançamento manual" : (NOMES_FONTE[res.fonte] || NOMES_FONTE[c.fonte] || c.fonte))],
-      res.consultado_em ? ["Última consulta", `<span class="mono">${new Date(res.consultado_em).toLocaleString("pt-BR")}</span>`] : null,
-      herdadoDe ? ["Abrangência", `Certidão emitida pelo CNPJ ${esc(empPorId(herdadoDe).cnpj)}; vale para todos os estabelecimentos da mesma raiz.`] : null,
+      ["Origem", esc(automatica(c) ? (res.fonte || "Consulta automática") : "Lançamento manual")],
+      ["Custo", esc(c.custo)],
+      ["Acesso exigido", esc(c.acesso)],
+      herdadoDe ? ["Abrangência", `Emitida pelo CNPJ ${esc(empPorId(herdadoDe).cnpj)}; vale para os estabelecimentos da mesma raiz.`] : null,
       ["Razão social", esc(e.razao_social)],
     ].filter(Boolean);
     let html = `<dl>${linhas.map(([k, v]) => `<dt>${k}</dt><dd>${v}</dd>`).join("")}</dl>`;
     if (res.ultima_falha) html += `<div class="nota"><b>Última tentativa falhou</b> em ${new Date(res.ultima_falha.em).toLocaleString("pt-BR")}: ${esc(res.ultima_falha.mensagem)}${res.situacao !== "erro" ? "<br>O resultado acima é o da última consulta que deu certo." : ""}</div>`;
-    if (res.situacao === "nao_configurado") html += `<div class="nota">Esta certidão é emitida pela Infosimples. Ela passa a sair sozinha quando o token for cadastrado nos Secrets do repositório.</div>`;
-    if (res.situacao === "sem_registro") html += `<div class="nota">Sem lançamento ainda. Emita pelo site do órgão e registre em <span class="mono">dados/manuais.csv</span>: CNPJ, <span class="mono">${esc(c.id)}</span>, resultado, emissão, validade e o link do PDF no SharePoint.</div>`;
-    if (c.obs) html += `<div class="nota">${esc(c.obs)}</div>`;
+    if (res.situacao === "sem_registro") html += `<div class="nota"><b>Como fazer:</b> ${esc(c.como_fazer)}<br>Depois, registre em <span class="mono">dados/manuais.csv</span>: CNPJ, <span class="mono">${esc(c.id)}</span>, resultado, emissão, validade e o link do PDF no SharePoint.</div>`;
     if (e.obs) html += `<div class="nota">${esc(e.obs)}</div>`;
     const acoes = [];
-    if (res.comprovante) acoes.push(`<button class="btn" type="button" id="p-pdf">Abrir comprovante</button>`);
     if (res.link_documento) acoes.push(`<a class="btn" href="${esc(res.link_documento)}" target="_blank" rel="noopener">Abrir documento</a>`);
     if (c.link) acoes.push(`<a class="btn btn-ghost" href="${esc(c.link)}" target="_blank" rel="noopener">Site do órgão</a>`);
     if (acoes.length) html += `<div class="acoes">${acoes.join("")}</div>`;
     $("#p-corpo").innerHTML = html;
     $("#fundo").hidden = false; $("#painel").hidden = false; $("#p-fechar").focus();
-    const bp = $("#p-pdf");
-    if (bp) bp.onclick = () => abrirComprovante(res.comprovante, bp);
   }
-
-  async function abrirComprovante(comp, botao) {
-    const original = botao.textContent;
-    if (window.DADOS_DEMO) { botao.textContent = "Disponível na versão publicada"; return; }
-    botao.textContent = "Abrindo…"; botao.disabled = true;
-    try {
-      const txt = await (await fetch(comp.arquivo, { cache: "no-store" })).text();
-      const bytes = await decifrar(txt, SENHA);
-      const url = URL.createObjectURL(new Blob([bytes], { type: comp.mime || "application/pdf" }));
-      const a = document.createElement("a"); a.href = url; a.target = "_blank"; a.rel = "noopener";
-      document.body.appendChild(a); a.click(); a.remove();
-      botao.textContent = original;
-    } catch { botao.textContent = "Não foi possível abrir"; }
-    botao.disabled = false;
-  }
-
-  function fechar() { $("#fundo").hidden = true; $("#painel").hidden = true; }
+  const fechar = () => { $("#fundo").hidden = true; $("#painel").hidden = true; };
   $("#p-fechar").onclick = fechar; $("#fundo").onclick = fechar;
   document.addEventListener("keydown", (ev) => { if (ev.key === "Escape") fechar(); });
 
@@ -495,29 +573,38 @@ footer.rodape { color: var(--muted); font-size: 12.5px; display: flex; flex-wrap
   });
   $("#busca").addEventListener("input", (ev) => { termo = ev.target.value.trim().toLowerCase(); renderMatriz(); });
 
+  function abrirAba(qual) {
+    for (const [t, p] of [["#tab-situacao", "#aba-situacao"], ["#tab-levantamento", "#aba-levantamento"]]) {
+      const ativo = p === `#aba-${qual}`;
+      $(t).setAttribute("aria-selected", String(ativo)); $(p).hidden = !ativo;
+    }
+  }
+  $("#tab-situacao").onclick = () => { abrirAba("situacao"); history.replaceState(null, "", "#situacao"); };
+  $("#tab-levantamento").onclick = () => { abrirAba("levantamento"); history.replaceState(null, "", "#levantamento"); };
+
   // ---------------- entrada ----------------
-  function mostrar(dados, demo) {
+  function mostrar(dados) {
     DADOS = dados;
-    $("#tela-login").hidden = true; $("#app").hidden = false;
-    $("#faixa-demo").hidden = !demo;
+    $("#tela-login").hidden = true; $("#app").hidden = false; $("#btn-sair").hidden = false;
+    abrirAba(location.hash === "#levantamento" ? "levantamento" : "situacao");
     render();
   }
   async function entrar(senha) {
     const txt = await (await fetch("dados.enc", { cache: "no-store" })).text();
     const json = JSON.parse(new TextDecoder().decode(await decifrar(txt, senha)));
-    SENHA = senha;
     try { sessionStorage.setItem(CHAVE_SESSAO, senha); } catch {}
-    mostrar(json, false);
+    mostrar(json);
   }
   $("#form-login").addEventListener("submit", async (ev) => {
     ev.preventDefault();
     const btn = $("#btn-entrar"); btn.disabled = true; btn.textContent = "Abrindo…"; $("#erro-login").textContent = "";
     try { await entrar($("#senha").value); }
-    catch { $("#erro-login").textContent = "Senha incorreta, ou os dados ainda não foram gerados pelo robô."; }
+    catch { $("#erro-login").textContent = "Senha incorreta, ou o robô ainda não gerou os dados."; }
     btn.disabled = false; btn.textContent = "Entrar";
   });
+  $("#btn-sair").onclick = () => { try { sessionStorage.removeItem(CHAVE_SESSAO); } catch {} location.reload(); };
 
-  if (window.DADOS_DEMO) { mostrar(window.DADOS_DEMO, true); return; }
+  if (window.DADOS_DEMO) { mostrar(window.DADOS_DEMO); return; }
   let salva = null;
   try { salva = sessionStorage.getItem(CHAVE_SESSAO); } catch {}
   $("#tela-login").hidden = false;

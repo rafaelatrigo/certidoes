@@ -6,11 +6,6 @@ on:
   push:
     paths: ["dados/**", "config/**"]   # ao editar os lançamentos manuais, a tela atualiza sozinha
   workflow_dispatch:
-    inputs:
-      forcar:
-        description: "Reemitir tudo, mesmo o que ainda está válido (gera custo)"
-        type: boolean
-        default: false
 
 permissions:
   contents: write
@@ -36,9 +31,6 @@ jobs:
       - name: Consultar fontes
         env:
           PAINEL_SENHA: ${{ secrets.PAINEL_SENHA }}
-          INFOSIMPLES_TOKEN: ${{ secrets.INFOSIMPLES_TOKEN }}
-          PORTAL_TRANSPARENCIA_KEY: ${{ secrets.PORTAL_TRANSPARENCIA_KEY }}
-          FORCAR: ${{ inputs.forcar }}
         run: python robo/atualizar.py
 
       - name: Publicar resultado
