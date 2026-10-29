@@ -42,6 +42,15 @@
   "municipio": "Feira de Santana"
  },
  {
+  "id": "feira2-mtz",
+  "empreendimento": "Carozzo Feira 2",
+  "razao_social": "Carozzo Feira 2 SPE LTDA",
+  "cnpj": "63.646.669/0001-75",
+  "tipo": "Matriz",
+  "municipio": "Feira de Santana",
+  "obs": "SPE aberta em 13/11/2025, 100% da Carozzo. Incluída após a consulta no Serasa."
+ },
+ {
   "id": "wellness-mtz",
   "empreendimento": "Carozzo Wellness",
   "razao_social": "Carozzo Wellness Jardim Armação LTDA",
