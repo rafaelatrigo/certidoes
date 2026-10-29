@@ -140,9 +140,16 @@ def consultar_receita(cnpj):
 def consultar_tcu(cnpj):
     """Consulta consolidada do TCU: devolve um dicionário por cadastro."""
     url = f"https://certidoes-apf.apps.tcu.gov.br/api/rest/publico/certidoes/{cnpj}?seEmitirPDF=false"
-    r = http.get(url, timeout=90)
-    r.raise_for_status()
-    j = r.json()
+    for tentativa in range(3):   # o TCU às vezes devolve resposta vazia; tenta de novo
+        try:
+            r = http.get(url, timeout=90)
+            r.raise_for_status()
+            j = r.json()
+            break
+        except Exception:
+            if tentativa == 2:
+                raise RuntimeError("TCU não respondeu depois de 3 tentativas")
+            time.sleep(8)
     saida = {}
     for c in j.get("certidoes") or []:
         texto = f"{c.get('emissor', '')} {c.get('tipo', '')} {c.get('descricao', '')}".upper()
