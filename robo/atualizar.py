@@ -33,6 +33,7 @@ DOCS = os.path.join(RAIZ, "docs")
 ARQ_DADOS = os.path.join(DOCS, "dados.enc")
 PASTA_PDFS = os.path.join(DOCS, "pdfs")
 FUSO = timezone(timedelta(hours=-3))
+LIMITE_SEG = 12 * 60   # depois de 12 minutos, o robô para de consultar e publica o que tem
 SENHA = os.environ.get("PAINEL_SENHA", "")
 
 http = requests.Session()
@@ -143,16 +144,16 @@ def consultar_receita(cnpj):
 def consultar_tcu(cnpj):
     """Consulta consolidada do TCU: devolve um dicionário por cadastro."""
     url = f"https://certidoes-apf.apps.tcu.gov.br/api/rest/publico/certidoes/{cnpj}?seEmitirPDF=false"
-    for tentativa in range(3):   # o TCU às vezes devolve resposta vazia; tenta de novo
+    for tentativa in range(2):   # o TCU às vezes devolve resposta vazia; tenta de novo uma vez
         try:
-            r = http.get(url, timeout=90)
+            r = http.get(url, timeout=20)
             r.raise_for_status()
             j = r.json()
             break
         except Exception:
-            if tentativa == 2:
-                raise RuntimeError("TCU não respondeu depois de 3 tentativas")
-            time.sleep(20 * (tentativa + 1))
+            if tentativa == 1:
+                raise RuntimeError("TCU não respondeu (firewall do TCU ou instabilidade)")
+            time.sleep(5)
     saida = {}
     for c in j.get("certidoes") or []:
         texto = f"{c.get('emissor', '')} {c.get('tipo', '')} {c.get('descricao', '')}".upper()
@@ -283,6 +284,7 @@ def main():
     tcu_cache, receita_cache = {}, {}
     tempos = {}
     inicio_total = time.time()
+    tcu_falhas = 0
     diagnostico = {}
     fgts_cli = None
     fgts_bloqueio = None
@@ -330,6 +332,8 @@ def main():
                         continue
                     if fgts_bloqueio:
                         raise RuntimeError(fgts_bloqueio)
+                    if time.time() - inicio_total > LIMITE_SEG:
+                        raise RuntimeError("Tempo da rodada esgotado; mantido o último resultado")
                     if fgts_cli is None:
                         import fgts
                         fgts_cli = fgts.ConsultaFGTS()
@@ -371,7 +375,16 @@ def main():
                                      "https://solucoes.receita.fazenda.gov.br/servicos/cnpjreva/cnpjreva_solicitacao.asp")
                 else:
                     if cnpj not in tcu_cache:
-                        tcu_cache[cnpj] = consultar_tcu(cnpj)
+                        if tcu_falhas >= 2:
+                            raise RuntimeError("TCU indisponível nesta rodada; mantido o último resultado")
+                        if time.time() - inicio_total > LIMITE_SEG:
+                            raise RuntimeError("Tempo da rodada esgotado; mantido o último resultado")
+                        try:
+                            tcu_cache[cnpj] = consultar_tcu(cnpj)
+                            tcu_falhas = 0
+                        except Exception:
+                            tcu_falhas += 1
+                            raise
                         time.sleep(4)
                     comp_ant = next((v.get("comprovante") for k, v in anteriores.items()
                                      if k.startswith(emp["id"] + "|") and (v or {}).get("comprovante", {}).get("nome", "").startswith("Consulta consolidada TCU")), None)
