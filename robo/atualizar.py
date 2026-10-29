@@ -255,7 +255,7 @@ def fgts_precisa(anterior):
     if not anterior or anterior.get("situacao") in (None, "erro", "positiva"):
         ultima = para_data((anterior or {}).get("consultado_em", "")) or "2000-01-01"
         return (hoje() - date.fromisoformat(ultima)).days >= 1
-    if not anterior.get("comprovante"):
+    if not anterior.get("comprovante") and def_dias_desde(anterior.get("consultado_em")) >= 0 and anterior.get("tipo") != "certidao_sem_pdf":
         return True   # ainda não tem o PDF do CRF
     ultima = para_data(anterior.get("consultado_em", "")) or "2000-01-01"
     if (hoje() - date.fromisoformat(ultima)).days >= 7:

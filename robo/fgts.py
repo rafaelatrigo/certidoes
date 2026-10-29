@@ -66,6 +66,10 @@ class ConsultaFGTS:
             link = p.get_by_text(re.compile("Certificado de Regularidade do FGTS", re.I)).first
             if link.count():
                 link.click()
+                try:
+                    p.wait_for_selector("text=/Validade/", timeout=25000)
+                except Exception:
+                    pass
                 p.wait_for_load_state("networkidle")
                 crf = p.inner_text("body")
                 m = re.search(r"Validade:\s*(\d{2}/\d{2}/\d{4})\s*a\s*(\d{2}/\d{2}/\d{4})", crf)
