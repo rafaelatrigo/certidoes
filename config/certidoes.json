@@ -272,7 +272,9 @@
    "motivo": "A consulta detalhada exige login gov.br; a certidão oficial tem emolumentos por cartório.",
    "como_fazer": "Consulta grátis em pesquisaprotesto.com.br com o seu gov.br.",
    "link": "https://www.pesquisaprotesto.com.br/",
-   "validade_padrao_dias": 30
+   "validade_padrao_dias": 30,
+   "custo_base": "Emolumento por cartório e por CNPJ (tabela TJBA)",
+   "custo_valor": ""
   },
   {
    "id": "biros",
@@ -281,14 +283,16 @@
    "orgao": "Birôs de crédito",
    "fonte": "manual",
    "escopo": "raiz",
-   "custo": "Grátis (conta da empresa)",
+   "custo": "Grátis (Serasa) / pago (outros birôs)",
    "acesso": "Login Serasa",
    "bloqueio": "Login da empresa",
    "ia_resultado": "Semi-automático",
    "motivo": "A conta Serasa da Carozzo mostra negativações, protestos, ações judiciais, cheques e falência da matriz e das SPEs, sem custo. Exige login da empresa, que só a equipe faz.",
    "como_fazer": "Uma vez por mês: a equipe entra no Serasa e a IA lê a tela de cada SPE e lança no painel. SPC, Boa Vista e Quod continuam só com contrato.",
    "link": "https://www.serasaempreendedor.com.br/v2/saude-do-seu-negocio/home/minha-empresa",
-   "validade_padrao_dias": 30
+   "validade_padrao_dias": 30,
+   "custo_base": "Grátis no Serasa da empresa; SPC, Boa Vista e Quod só com contrato",
+   "custo_valor": ""
   },
   {
    "id": "cadin",
@@ -336,7 +340,9 @@
    "motivo": "Tem taxa e exige login.",
    "como_fazer": "Emitir quando o banco pedir.",
    "link": "https://www.juceb.ba.gov.br/",
-   "validade_padrao_dias": 30
+   "validade_padrao_dias": 30,
+   "custo_base": "Taxa da JUCEB por certidão",
+   "custo_valor": ""
   },
   {
    "id": "matricula",
@@ -352,7 +358,9 @@
    "motivo": "Cartório cobra emolumentos por certidão.",
    "como_fazer": "Pedir pelo ONR (registradores.onr.org.br).",
    "link": "https://www.registradores.onr.org.br/",
-   "validade_padrao_dias": 30
+   "validade_padrao_dias": 30,
+   "custo_base": "Emolumento do Registro de Imóveis por certidão (tabela TJBA)",
+   "custo_valor": ""
   },
   {
    "id": "acoes_reais",
@@ -368,7 +376,9 @@
    "motivo": "Cartório cobra emolumentos por certidão.",
    "como_fazer": "Pedir pelo ONR junto com a matrícula.",
    "link": "https://www.registradores.onr.org.br/",
-   "validade_padrao_dias": 30
+   "validade_padrao_dias": 30,
+   "custo_base": "Emolumento do Registro de Imóveis por certidão (tabela TJBA)",
+   "custo_valor": ""
   },
   {
    "id": "iptu",
