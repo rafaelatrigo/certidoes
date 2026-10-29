@@ -26,6 +26,7 @@ import requests
 sys.path.insert(0, os.path.dirname(__file__))
 from cripto import cifrar, decifrar  # noqa: E402
 import pgfn  # noqa: E402
+import relatorio  # noqa: E402
 
 RAIZ = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 DOCS = os.path.join(RAIZ, "docs")
@@ -228,6 +229,27 @@ def def_dias_desde(iso):
     return (hoje() - date.fromisoformat(d)).days if d else 9999
 
 
+def br_data(iso):
+    d = para_data(iso or "")
+    return f"{d[8:10]}/{d[5:7]}/{d[0:4]}" if d else ""
+
+
+def anexar_relatorio(novo, anterior, emp, cert_id, titulo, linhas, fonte, link, dias=7):
+    """Gera (no máximo a cada `dias`) um PDF de relatório de consulta e anexa ao resultado."""
+    comp = (anterior or {}).get("comprovante")
+    mudou = (anterior or {}).get("situacao") != novo.get("situacao")
+    if comp and not mudou and def_dias_desde(comp.get("emissao")) < dias:
+        novo["comprovante"] = comp
+        return
+    try:
+        pdf = relatorio.gerar(titulo, emp["razao_social"], emp["cnpj"], linhas, fonte, link,
+                              datetime.now(FUSO).strftime("%d/%m/%Y %H:%M"))
+        novo["comprovante"] = salvar_pdf(pdf, f"{emp['id']}_{cert_id}", titulo, hoje().isoformat())
+    except Exception:
+        if comp:
+            novo["comprovante"] = comp
+
+
 def fgts_precisa(anterior):
     if not anterior or anterior.get("situacao") in (None, "erro", "positiva"):
         ultima = para_data((anterior or {}).get("consultado_em", "")) or "2000-01-01"
@@ -323,6 +345,12 @@ def main():
                                 fonte=f"PGFN – dados abertos ({pgfn_info.get('trimestre')})",
                                 link_documento="https://www.gov.br/pgfn/pt-br/assuntos/divida-ativa-da-uniao/transparencia-fiscal-1/dados-abertos")
                     novo["consultado_em"] = pgfn_info.get("consultado_em") or agora_iso()
+                    anexar_relatorio(novo, anterior if (anterior or {}).get("consultado_em") == novo["consultado_em"] else None,
+                                     emp, cert["id"], "Dívida ativa da União (PGFN)",
+                                     [("Resultado", novo.get("mensagem")), ("Base consultada", pgfn_info.get("trimestre", "").replace("_trimestre_", " – trimestre ")),
+                                      ("Abrangência", "Raiz do CNPJ (matriz e filiais)")],
+                                     "PGFN – dados abertos da dívida ativa da União (geral, previdenciária e FGTS)",
+                                     "https://www.gov.br/pgfn/pt-br/assuntos/divida-ativa-da-uniao/transparencia-fiscal-1/dados-abertos", dias=100)
                     resultados[chave] = novo
                     resumo["consultadas"] += 1
                     continue
@@ -330,6 +358,10 @@ def main():
                     if cnpj not in receita_cache:
                         receita_cache[cnpj] = consultar_receita(cnpj)
                     novo = dict(receita_cache[cnpj])
+                    anexar_relatorio(novo, anterior, emp, cert["id"], "Situação cadastral do CNPJ",
+                                     [("Resultado", novo.get("mensagem")), ("Data da consulta", br_data(novo.get("emissao")))],
+                                     "Receita Federal – base aberta do CNPJ",
+                                     "https://solucoes.receita.fazenda.gov.br/servicos/cnpjreva/cnpjreva_solicitacao.asp")
                 else:
                     if cnpj not in tcu_cache:
                         tcu_cache[cnpj] = consultar_tcu(cnpj)
@@ -364,6 +396,7 @@ def main():
 
     if fgts_cli is not None:
         fgts_cli.fechar()
+    relatorio.fechar()
 
     estado = {
         "pgfn": pgfn_info,
