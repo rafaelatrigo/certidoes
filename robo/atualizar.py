@@ -252,6 +252,8 @@ def anexar_relatorio(novo, anterior, emp, cert_id, titulo, linhas, fonte, link, 
 
 
 def fgts_precisa(anterior):
+    if (anterior or {}).get("mensagem", "").startswith("Não está regular no FGTS (ver site"):
+        return True   # resultado da versão antiga do robô: reclassificar
     if (anterior or {}).get("situacao") == "sem_cadastro":
         return def_dias_desde(anterior.get("consultado_em")) >= 7
     if not anterior or anterior.get("situacao") in (None, "erro", "positiva"):
