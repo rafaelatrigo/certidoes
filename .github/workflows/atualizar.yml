@@ -26,7 +26,9 @@ jobs:
           python-version: "3.12"
 
       - name: Instalar dependências
-        run: pip install requests cryptography
+        run: |
+          pip install requests cryptography playwright
+          python -m playwright install --with-deps chromium
 
       - name: Consultar fontes
         env:

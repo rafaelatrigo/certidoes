@@ -12,8 +12,10 @@ Um robô (GitHub Actions) roda todo dia útil às 06:17 e consulta sozinho, de g
 | Licitantes inidôneos | TCU, consulta consolidada (API pública) |
 | CEIS e CNEP | Portal da Transparência, pela consulta do TCU |
 | Improbidade (CNIA) | CNJ, pela consulta do TCU (o sistema do CNJ cai com frequência) |
+| Regularidade do FGTS (CRF) | CAIXA, formulário público sem captcha; toda semana e perto do vencimento |
+| Dívida ativa da União | PGFN, base aberta trimestral (geral, previdenciária e FGTS); indica dívida inscrita, não substitui a CND |
 
-As demais certidões (CND Federal, FGTS, CNDT, estadual, municipais, TJBA, TRF1, cartórios etc.) entram por lançamento manual. A aba **O que a IA consegue fazer** mostra, para cada uma, o custo, o acesso exigido, o que impede a automação e como emitir.
+As demais certidões (CND Federal, CNDT, estadual, municipais, TJBA, TRF1, cartórios etc.) entram por lançamento manual. A aba **O que a IA consegue fazer** mostra, para cada uma, o custo, o acesso exigido, o que impede a automação e como emitir.
 
 Tudo que fica em `docs/` é criptografado com a senha do painel (AES-256-GCM). O log do robô mostra só contagens.
 

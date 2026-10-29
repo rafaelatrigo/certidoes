@@ -3,6 +3,8 @@
 Roda no GitHub Actions todo dia útil. Consulta sozinho, sem custo e sem login:
   - Receita Federal (base aberta do CNPJ): situação cadastral
   - TCU, consulta consolidada: licitantes inidôneos, CEIS, CNEP e improbidade (CNJ)
+  - CAIXA: regularidade do FGTS (CRF), uma vez por semana ou perto do vencimento
+  - PGFN: base aberta de devedores da dívida ativa, a cada novo trimestre
 As demais certidões entram por dados/manuais.csv.
 
 Tudo que vai para docs/ sai criptografado com a senha do painel.
@@ -22,6 +24,7 @@ import requests
 
 sys.path.insert(0, os.path.dirname(__file__))
 from cripto import cifrar, decifrar  # noqa: E402
+import pgfn  # noqa: E402
 
 RAIZ = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 DOCS = os.path.join(RAIZ, "docs")
@@ -190,13 +193,26 @@ def manual_para_resultado(m, cert):
             "tipo": "manual"}
 
 
+def fgts_precisa(anterior):
+    if not anterior or anterior.get("situacao") in (None, "erro", "positiva"):
+        ultima = para_data((anterior or {}).get("consultado_em", "")) or "2000-01-01"
+        return (hoje() - date.fromisoformat(ultima)).days >= 1
+    ultima = para_data(anterior.get("consultado_em", "")) or "2000-01-01"
+    if (hoje() - date.fromisoformat(ultima)).days >= 7:
+        return True
+    v = anterior.get("validade")
+    return bool(v) and (date.fromisoformat(v) - hoje()).days <= 5
+
+
 def main():
     if not SENHA:
         sys.exit("Defina PAINEL_SENHA (Secret do repositório).")
 
     empresas = carregar_json("config/empresas.json")
     catalogo = carregar_json("config/certidoes.json")["certidoes"]
-    anteriores = carregar_estado().get("resultados", {})
+    estado_ant = carregar_estado()
+    anteriores = estado_ant.get("resultados", {})
+    pgfn_info = estado_ant.get("pgfn") or {}
     manuais = carregar_manuais()
     resultados = {}
     resumo = {"consultadas": 0, "falhas": 0}
@@ -206,6 +222,20 @@ def main():
         emissores.setdefault(digitos(e["cnpj"])[:8], e["id"])
 
     tcu_cache, receita_cache = {}, {}
+    fgts_cli = None
+
+    # PGFN: baixa a base só quando sai um trimestre novo
+    raizes = sorted({digitos(e["cnpj"])[:8] for e in empresas})
+    try:
+        tri = pgfn.ultimo_trimestre(http, hoje())
+        if tri != pgfn_info.get("trimestre") or set(raizes) - set(pgfn_info.get("raizes", {})):
+            print(f"PGFN: lendo a base {tri} (pode levar alguns minutos)")
+            achados = pgfn.buscar(http, tri, raizes)
+            pgfn_info = {"trimestre": tri, "consultado_em": agora_iso(),
+                         "raizes": {r: pgfn.resumo(achados[r], tri) for r in raizes}}
+    except Exception as exc:
+        print("PGFN: falha ao ler a base")
+        pgfn_info = dict(pgfn_info, falha=str(exc)[:300])
 
     for cert in catalogo:
         for emp in empresas:
@@ -226,7 +256,28 @@ def main():
 
             cnpj = digitos(emp["cnpj"])
             try:
-                if cert["fonte"] == "receita":
+                if cert["fonte"] == "fgts":
+                    if not fgts_precisa(anterior):
+                        resultados[chave] = anterior
+                        continue
+                    if fgts_cli is None:
+                        import fgts
+                        fgts_cli = fgts.ConsultaFGTS()
+                    novo = fgts_cli.consultar(cnpj)
+                    time.sleep(2)
+                elif cert["fonte"] == "pgfn":
+                    item = (pgfn_info.get("raizes") or {}).get(cnpj[:8])
+                    if not item:
+                        raise RuntimeError(pgfn_info.get("falha") or "Base da PGFN ainda não lida")
+                    emissao = para_data(pgfn_info.get("consultado_em", "")) or hoje().isoformat()
+                    novo = dict(item, emissao=emissao, validade=somar_dias(emissao, 100), tipo="consulta",
+                                fonte=f"PGFN – dados abertos ({pgfn_info.get('trimestre')})",
+                                link_documento="https://www.gov.br/pgfn/pt-br/assuntos/divida-ativa-da-uniao/transparencia-fiscal-1/dados-abertos")
+                    novo["consultado_em"] = pgfn_info.get("consultado_em") or agora_iso()
+                    resultados[chave] = novo
+                    resumo["consultadas"] += 1
+                    continue
+                elif cert["fonte"] == "receita":
                     if cnpj not in receita_cache:
                         receita_cache[cnpj] = consultar_receita(cnpj)
                     novo = dict(receita_cache[cnpj])
@@ -249,7 +300,11 @@ def main():
                 resultados[chave] = base
                 resumo["falhas"] += 1
 
+    if fgts_cli is not None:
+        fgts_cli.fechar()
+
     estado = {
+        "pgfn": pgfn_info,
         "versao": 2,
         "modo": "gratuito",
         "atualizado_em": agora_iso(),
