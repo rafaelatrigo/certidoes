@@ -99,6 +99,16 @@ a { color: inherit; }
 .topo nav a { text-decoration: none; font-size: 13px; padding: 6px 10px; border-radius: 6px; opacity: .85; }
 .topo nav a:hover { background: rgba(255,255,255,.08); opacity: 1; }
 .sair { background: none; border: 1px solid rgba(255,255,255,.3); color: var(--topo-fg); border-radius: 6px; padding: 5px 11px; font-size: 13px; cursor: pointer; }
+.topo-acoes { display: flex; gap: 8px; align-items: center; }
+.btn-atualizar { background: var(--marca-cobre); color: #fff; border: 0; border-radius: 6px; padding: 6px 12px; font-size: 13px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 7px; white-space: nowrap; }
+.btn-atualizar:disabled { opacity: .75; cursor: progress; }
+.btn-atualizar .gira { width: 12px; height: 12px; border: 2px solid rgba(255,255,255,.45); border-top-color: #fff; border-radius: 50%; display: none; }
+.btn-atualizar.rodando .gira { display: inline-block; animation: gira 1s linear infinite; }
+@keyframes gira { to { transform: rotate(360deg); } }
+.passos { margin: 0; padding-left: 1.2rem; display: grid; gap: 6px; font-size: 13.5px; line-height: 1.5; }
+.campo-token { width: 100%; padding: 10px 12px; border-radius: 8px; border: 1px solid var(--line); background: var(--surface-2); color: var(--fg); font: 13px var(--f-mono); }
+.status-run { display: flex; gap: 10px; align-items: center; font-size: 14px; padding: 12px; border-radius: 8px; background: var(--surface-2); }
+.status-run b { font-weight: 600; }
 main.gutter { padding-block: 22px 56px; }
 
 /* login */
@@ -243,7 +253,10 @@ main.gutter { padding-block: 22px 56px; }
       <a href="#custos">Custos</a>
       <a href="#porque">Limites da IA</a>
     </nav>
-    <button class="sair" type="button" id="btn-sair" hidden>Sair</button>
+    <div class="topo-acoes">
+      <button class="btn-atualizar" type="button" id="btn-atualizar" hidden><span class="gira" aria-hidden="true"></span><span id="txt-atualizar">Atualizar agora</span></button>
+      <button class="sair" type="button" id="btn-sair" hidden>Sair</button>
+    </div>
   </div>
 </div>
 
@@ -572,13 +585,112 @@ main.gutter { padding-block: 22px 56px; }
     abrirPainel(`${e.cnpj} · ${e.tipo}`, curto(e), html);
   }
   const fechar = () => { $("#fundo").hidden = true; $("#painel").hidden = true; };
+
+  // ---------- botão "Atualizar agora" (dispara o robô no GitHub) ----------
+  const REPO = "rafaelatrigo/certidoes", WF = "atualizar.yml";
+  const LINK_ACTIONS = `https://github.com/${REPO}/actions/workflows/${WF}`;
+  const CHAVE_TOKEN = "certidoes-gh-token";
+  const lerToken = () => { try { return localStorage.getItem(CHAVE_TOKEN) || ""; } catch { return ""; } };
+  const salvarToken = (t) => { try { t ? localStorage.setItem(CHAVE_TOKEN, t) : localStorage.removeItem(CHAVE_TOKEN); } catch {} };
+  let rodando = false;
+
+  function estadoBotao(txt, girando) {
+    $("#txt-atualizar").textContent = txt;
+    $("#btn-atualizar").classList.toggle("rodando", !!girando);
+    $("#btn-atualizar").disabled = !!girando;
+  }
+  async function gh(path, opts = {}) {
+    const r = await fetch(`https://api.github.com/repos/${REPO}${path}`, {
+      ...opts, headers: { Accept: "application/vnd.github+json", Authorization: `Bearer ${lerToken()}`, "X-GitHub-Api-Version": "2022-11-28", ...(opts.headers || {}) },
+    });
+    if (r.status === 401 || r.status === 403) throw new Error("A chave do GitHub não foi aceita (vencida ou sem permissão de Actions).");
+    if (!r.ok && r.status !== 204) throw new Error(`GitHub respondeu ${r.status}.`);
+    return r.status === 204 ? null : r.json();
+  }
+  async function recarregarDados() {
+    let senha = null; try { senha = sessionStorage.getItem(CHAVE_SESSAO); } catch {}
+    if (!senha) { location.reload(); return; }
+    const txt = await (await fetch(`dados.enc?t=${Date.now()}`, { cache: "no-store" })).text();
+    D = JSON.parse(new TextDecoder().decode(await decifrar(txt, senha)));
+    render();
+  }
+  const espera = (ms) => new Promise((ok) => setTimeout(ok, ms));
+  async function disparar() {
+    if (rodando) return;
+    rodando = true; fechar();
+    const inicio = new Date(Date.now() - 60000).toISOString();
+    try {
+      estadoBotao("Iniciando…", true);
+      await gh(`/actions/workflows/${WF}/dispatches`, { method: "POST", body: JSON.stringify({ ref: "main" }) });
+      let run = null;
+      for (let i = 0; i < 120; i++) {   // até ~30 min
+        await espera(15000);
+        const j = await gh(`/actions/workflows/${WF}/runs?event=workflow_dispatch&per_page=1&created=>=${inicio}`);
+        run = (j.workflow_runs || [])[0];
+        if (!run) { estadoBotao("Na fila…", true); continue; }
+        if (run.status !== "completed") { estadoBotao("Buscando certidões…", true); continue; }
+        break;
+      }
+      if (!run || run.status !== "completed") throw new Error("A busca está demorando mais que o normal. Confira no GitHub.");
+      if (run.conclusion !== "success") throw new Error("A busca terminou com erro. Veja o detalhe no GitHub.");
+      estadoBotao("Publicando…", true);
+      const antes = D.atualizado_em;
+      for (let i = 0; i < 16; i++) {    // espera o GitHub Pages publicar (até ~4 min)
+        await espera(15000);
+        try { await recarregarDados(); } catch {}
+        if (D.atualizado_em !== antes) break;
+      }
+      estadoBotao("Atualizado ✓", false);
+      setTimeout(() => estadoBotao("Atualizar agora", false), 6000);
+    } catch (err) {
+      estadoBotao("Atualizar agora", false);
+      abrirPainel("Atualizar agora", "Não deu certo", `<div class="nota">${esc(err.message)}</div>
+        <div class="acoes"><a class="btn" href="${LINK_ACTIONS}" target="_blank" rel="noopener">Abrir no GitHub</a></div>`);
+    }
+    rodando = false;
+  }
+  function abrirAtualizar() {
+    if (rodando) return;
+    const tem = !!lerToken();
+    let html = `<p style="font-size:14px">O robô consulta de novo Receita, TCU, FGTS e PGFN para todos os CNPJs. Leva de 2 a 5 minutos, e o painel recarrega sozinho quando terminar.</p>`;
+    if (tem) {
+      html += `<div class="acoes"><button class="btn" type="button" id="go-run">Rodar a busca agora</button>
+        <button class="btn btn-ghost" type="button" id="go-limpar">Remover a chave deste navegador</button></div>`;
+    } else {
+      html += `<h3>Ativar o botão neste navegador (uma vez só)</h3>
+        <ol class="passos">
+          <li>Abra <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">github.com/settings/personal-access-tokens/new</a>.</li>
+          <li>Em <b>Repository access</b>, escolha <b>Only select repositories</b> e marque <b>certidoes</b>.</li>
+          <li>Em <b>Permissions → Repository permissions</b>, coloque <b>Actions</b> em <b>Read and write</b>. Não marque mais nada.</li>
+          <li>Gere a chave, copie e cole abaixo.</li>
+        </ol>
+        <label for="campo-token" class="eyebrow">Chave do GitHub</label>
+        <input id="campo-token" class="campo-token" type="password" autocomplete="off" placeholder="github_pat_…">
+        <div class="acoes"><button class="btn" type="button" id="go-salvar">Salvar e rodar a busca</button></div>
+        <div class="nota">A chave fica guardada só neste navegador e só consegue rodar o robô deste repositório. Ela não vai para o GitHub Pages nem para outras pessoas.</div>
+        <h3>Sem chave</h3>
+        <p style="font-size:13.5px">Quem tem acesso ao repositório pode rodar pelo GitHub: <b>Run workflow → Run workflow</b>. Depois de uns 5 minutos, recarregue o painel.</p>
+        <div class="acoes"><a class="btn btn-ghost" href="${LINK_ACTIONS}" target="_blank" rel="noopener">Abrir no GitHub</a></div>`;
+    }
+    abrirPainel("Robô de certidões", "Atualizar agora", html);
+    const run = $("#go-run"); if (run) run.onclick = disparar;
+    const limpar = $("#go-limpar"); if (limpar) limpar.onclick = () => { salvarToken(""); abrirAtualizar(); };
+    const salvar = $("#go-salvar");
+    if (salvar) salvar.onclick = () => {
+      const t = $("#campo-token").value.trim();
+      if (!/^(github_pat_|ghp_)[A-Za-z0-9_]{20,}$/.test(t)) { $("#campo-token").focus(); $("#campo-token").style.borderColor = "var(--b-pend)"; return; }
+      salvarToken(t); disparar();
+    };
+  }
+  $("#btn-atualizar").onclick = abrirAtualizar;
+
   $("#p-fechar").onclick = fechar; $("#fundo").onclick = fechar;
   document.addEventListener("keydown", (ev) => { if (ev.key === "Escape") fechar(); });
 
   // ---------- entrada ----------
   function mostrar(dados) {
     D = dados;
-    $("#tela-login").hidden = true; $("#app").hidden = false; $("#btn-sair").hidden = false; $("#nav").hidden = false;
+    $("#tela-login").hidden = true; $("#app").hidden = false; $("#btn-sair").hidden = false; $("#btn-atualizar").hidden = false; $("#nav").hidden = false;
     render();
   }
   async function entrar(senha) {
