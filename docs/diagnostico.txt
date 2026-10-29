@@ -1,2 +1,4 @@
-Execução 2026-10-29T16:02:20-03:00
-tcu: Expecting value: line 1 column 1 (char 0)
+Execução 2026-10-29T16:29:03-03:00
+fgts: It looks like you are using Playwright Sync API inside the asyncio loop.
+Please use the Async API instead.
+tcu: TCU não respondeu depois de 3 tentativas
