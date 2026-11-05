@@ -1,3 +1,3 @@
-Execução 2026-11-04T14:17:18-03:00 · duração total 198s
-Tempo por fonte: pgfn 1s, receita 21s, tcu 175s, tcu_pdf 63s
+Execução 2026-11-05T14:37:23-03:00 · duração total 173s
+Tempo por fonte: fgts 54s, pgfn 1s, receita 6s, tcu 112s
 tcu: Sistema do órgão indisponível na hora da consulta
