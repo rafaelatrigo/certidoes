@@ -14,7 +14,25 @@
    "ia_resultado": "Consultado",
    "motivo": "Base aberta da Receita sem captcha.",
    "como_fazer": "Automático todo dia.",
-   "link": "https://solucoes.receita.fazenda.gov.br/servicos/cnpjreva/cnpjreva_solicitacao.asp"
+   "link": "https://solucoes.receita.fazenda.gov.br/servicos/cnpjreva/cnpjreva_solicitacao.asp",
+   "como_preencher": [
+    {
+     "campo": "Site",
+     "valor": "Comprovante de Inscrição e Situação Cadastral (Receita)"
+    },
+    {
+     "campo": "CNPJ",
+     "valor": "CNPJ do estabelecimento, um por vez (matriz e cada filial)"
+    },
+    {
+     "campo": "Captcha",
+     "valor": "Marcar \"Não sou um robô\" e Consultar"
+    },
+    {
+     "campo": "Dica",
+     "valor": "Imprima em PDF o comprovante que aparece"
+    }
+   ]
   },
   {
    "id": "tcu_inidoneos",
@@ -30,7 +48,21 @@
    "motivo": "O TCU publica uma API aberta de consulta consolidada.",
    "como_fazer": "Automático todo dia.",
    "link": "https://certidoes.apps.tcu.gov.br/",
-   "tcu_chave": "tcu"
+   "tcu_chave": "tcu",
+   "como_preencher": [
+    {
+     "campo": "Site",
+     "valor": "Certidões TCU › Consulta Consolidada de Pessoa Jurídica"
+    },
+    {
+     "campo": "CNPJ",
+     "valor": "CNPJ da empresa, só números"
+    },
+    {
+     "campo": "Resultado",
+     "valor": "Uma consulta traz TCU, CNJ (improbidade), CEIS e CNEP juntos; baixe o PDF"
+    }
+   ]
   },
   {
    "id": "ceis",
@@ -46,7 +78,21 @@
    "motivo": "Vem junto na consulta consolidada do TCU.",
    "como_fazer": "Automático todo dia.",
    "link": "https://portaldatransparencia.gov.br/sancoes/ceis",
-   "tcu_chave": "ceis"
+   "tcu_chave": "ceis",
+   "como_preencher": [
+    {
+     "campo": "Atalho",
+     "valor": "Use a Consulta Consolidada do TCU: já traz o CEIS"
+    },
+    {
+     "campo": "No Portal da Transparência",
+     "valor": "Sanções › CEIS › filtro \"CPF/CNPJ do sancionado\" = CNPJ"
+    },
+    {
+     "campo": "Dica",
+     "valor": "Sem resultado na lista = nada consta"
+    }
+   ]
   },
   {
    "id": "cnep",
@@ -62,7 +108,21 @@
    "motivo": "Vem junto na consulta consolidada do TCU.",
    "como_fazer": "Automático todo dia.",
    "link": "https://portaldatransparencia.gov.br/sancoes/cnep",
-   "tcu_chave": "cnep"
+   "tcu_chave": "cnep",
+   "como_preencher": [
+    {
+     "campo": "Atalho",
+     "valor": "Use a Consulta Consolidada do TCU: já traz o CNEP"
+    },
+    {
+     "campo": "No Portal da Transparência",
+     "valor": "Sanções › CNEP › filtro \"CPF/CNPJ do sancionado\" = CNPJ"
+    },
+    {
+     "campo": "Dica",
+     "valor": "Sem resultado na lista = nada consta"
+    }
+   ]
   },
   {
    "id": "cnj_improbidade",
@@ -78,7 +138,37 @@
    "motivo": "O sistema do CNJ estava fora do ar na hora da consulta (29/10 13:46).",
    "como_fazer": "Automático; o robô tenta de novo no dia seguinte.",
    "link": "https://www.cnj.jus.br/improbidade_adm/consultar_requerido.php",
-   "tcu_chave": "cnj"
+   "tcu_chave": "cnj",
+   "como_preencher": [
+    {
+     "campo": "Menu",
+     "valor": "Consulta de Pessoa(s)"
+    },
+    {
+     "campo": "Esfera",
+     "valor": ".:Todos(as):."
+    },
+    {
+     "campo": "Tipo pessoa",
+     "valor": "Jurídica"
+    },
+    {
+     "campo": "CPF/CNPJ",
+     "valor": "CNPJ da empresa, só números"
+    },
+    {
+     "campo": "Nome da Pessoa",
+     "valor": "Deixar em branco"
+    },
+    {
+     "campo": "Ação",
+     "valor": "Pesquisar; repetir para cada CNPJ"
+    },
+    {
+     "campo": "Dica",
+     "valor": "Para sócios (quando entrarem): Tipo pessoa = Física e o CPF. A Consulta Consolidada do TCU também traz este cadastro"
+    }
+   ]
   },
   {
    "id": "pgfn_devedores",
@@ -94,7 +184,29 @@
    "motivo": "A PGFN publica a base de devedores a cada trimestre. Indica dívida inscrita; não substitui a CND Federal.",
    "como_fazer": "Automático: o robô lê cada nova base trimestral.",
    "link": "https://www.listadevedores.pgfn.gov.br/",
-   "validade_padrao_dias": 90
+   "validade_padrao_dias": 90,
+   "como_preencher": [
+    {
+     "campo": "Site",
+     "valor": "Lista de Devedores da PGFN"
+    },
+    {
+     "campo": "Pesquisar por",
+     "valor": "CPF/CNPJ"
+    },
+    {
+     "campo": "CNPJ",
+     "valor": "CNPJ da matriz (a lista abrange a raiz)"
+    },
+    {
+     "campo": "Naturezas",
+     "valor": "Marcar todas: Não previdenciária, Previdenciária e FGTS"
+    },
+    {
+     "campo": "Dica",
+     "valor": "Indica dívida inscrita; não substitui a CND Federal"
+    }
+   ]
   },
   {
    "id": "crf_fgts",
@@ -110,7 +222,29 @@
    "motivo": "Formulário público da CAIXA sem captcha. O robô consulta e lê a validade do CRF.",
    "como_fazer": "Automático: o robô consulta toda semana e perto do vencimento.",
    "link": "https://consulta-crf.caixa.gov.br/consultacrf/pages/consultaEmpregador.jsf",
-   "validade_padrao_dias": 30
+   "validade_padrao_dias": 30,
+   "como_preencher": [
+    {
+     "campo": "Tipo de Inscrição",
+     "valor": "CNPJ"
+    },
+    {
+     "campo": "Inscrição",
+     "valor": "CNPJ só números, sem ponto, barra ou traço"
+    },
+    {
+     "campo": "UF",
+     "valor": "Deixar em branco"
+    },
+    {
+     "campo": "Ação",
+     "valor": "Consultar › Certificado de Regularidade do FGTS – CRF › Visualizar"
+    },
+    {
+     "campo": "Dica",
+     "valor": "\"Não foi possível verificar\" = CNPJ sem cadastro de empregador (filial ou SPE sem funcionários)"
+    }
+   ]
   },
   {
    "id": "cnd_federal",
@@ -126,7 +260,29 @@
    "motivo": "O site exige captcha para emitir. Contornar captcha fere os termos do órgão.",
    "como_fazer": "IA abre o site e preenche o CNPJ no seu navegador; você resolve o captcha. Validade de 180 dias.",
    "link": "https://servicos.receitafederal.gov.br/servico/certidoes/#/home/cnpj",
-   "validade_padrao_dias": 180
+   "validade_padrao_dias": 180,
+   "como_preencher": [
+    {
+     "campo": "Opção",
+     "valor": "Emitir certidão (ou 2ª via, se já houver uma válida)"
+    },
+    {
+     "campo": "Tipo",
+     "valor": "Pessoa Jurídica"
+    },
+    {
+     "campo": "CNPJ",
+     "valor": "Somente o da MATRIZ: vale para todas as filiais"
+    },
+    {
+     "campo": "Captcha",
+     "valor": "Resolver e Emitir"
+    },
+    {
+     "campo": "Dica",
+     "valor": "Validade de 180 dias; se sair \"positiva\", consultar a Situação Fiscal no e-CAC"
+    }
+   ]
   },
   {
    "id": "cndt",
@@ -142,7 +298,25 @@
    "motivo": "O site exige captcha para emitir.",
    "como_fazer": "IA preenche; você resolve o captcha. Validade de 180 dias.",
    "link": "https://cndt-certidao.tst.jus.br/inicio.faces",
-   "validade_padrao_dias": 180
+   "validade_padrao_dias": 180,
+   "como_preencher": [
+    {
+     "campo": "Opção",
+     "valor": "Emitir Certidão"
+    },
+    {
+     "campo": "CPF/CNPJ",
+     "valor": "CNPJ da MATRIZ, só números: abrange as filiais"
+    },
+    {
+     "campo": "Captcha",
+     "valor": "Resolver e Emitir"
+    },
+    {
+     "campo": "Dica",
+     "valor": "Validade de 180 dias"
+    }
+   ]
   },
   {
    "id": "ceat_trt5",
@@ -158,7 +332,25 @@
    "motivo": "Página dinâmica com verificação anti-robô; não respondeu à leitura automática.",
    "como_fazer": "IA preenche; você resolve o captcha.",
    "link": "https://www.trt5.jus.br/certidao-eletronica/1",
-   "validade_padrao_dias": 30
+   "validade_padrao_dias": 30,
+   "como_preencher": [
+    {
+     "campo": "Tipo de certidão",
+     "valor": "Certidão Eletrônica de Ações Trabalhistas (CEAT)"
+    },
+    {
+     "campo": "Tipo de pessoa",
+     "valor": "Jurídica"
+    },
+    {
+     "campo": "CNPJ",
+     "valor": "CNPJ do estabelecimento, um por vez"
+    },
+    {
+     "campo": "Captcha",
+     "valor": "Resolver e Emitir"
+    }
+   ]
   },
   {
    "id": "cnd_estadual",
@@ -174,7 +366,25 @@
    "motivo": "O formulário só funciona interagindo com a página; a leitura automática não consegue enviar.",
    "como_fazer": "IA preenche no seu navegador e baixa o PDF.",
    "link": "https://servicos.sefaz.ba.gov.br/sistemas/DSCRE/Modulos/Publico/EmissaoCertidao.aspx",
-   "validade_padrao_dias": 60
+   "validade_padrao_dias": 60,
+   "como_preencher": [
+    {
+     "campo": "Tipo de documento",
+     "valor": "CNPJ"
+    },
+    {
+     "campo": "Número",
+     "valor": "CNPJ do estabelecimento (cada filial com inscrição estadual tem a sua)"
+    },
+    {
+     "campo": "Ação",
+     "valor": "Emitir certidão"
+    },
+    {
+     "campo": "Dica",
+     "valor": "Validade de 60 dias"
+    }
+   ]
   },
   {
    "id": "cnd_salvador",
@@ -191,7 +401,25 @@
    "como_fazer": "IA preenche no seu navegador; você confirma. Vale para matriz e filiais em Salvador.",
    "link": "https://www.sefaz.salvador.ba.gov.br/certidoes",
    "validade_padrao_dias": 90,
-   "municipio": "Salvador"
+   "municipio": "Salvador",
+   "como_preencher": [
+    {
+     "campo": "Menu",
+     "valor": "Certidões › Certidão de Débitos de Pessoa Jurídica (mobiliário)"
+    },
+    {
+     "campo": "Identificação",
+     "valor": "CNPJ da matriz (abrange os estabelecimentos em Salvador) ou a inscrição municipal"
+    },
+    {
+     "campo": "Captcha",
+     "valor": "Resolver e Emitir"
+    },
+    {
+     "campo": "Dica",
+     "valor": "Não serve para Ícone e Feira 2, que ficam em Feira de Santana"
+    }
+   ]
   },
   {
    "id": "cnd_feira",
@@ -208,7 +436,25 @@
    "como_fazer": "Emitir no portal da Prefeitura de Feira de Santana.",
    "link": "https://www.feiradesantana.ba.gov.br/",
    "validade_padrao_dias": 90,
-   "municipio": "Feira de Santana"
+   "municipio": "Feira de Santana",
+   "como_preencher": [
+    {
+     "campo": "Site",
+     "valor": "Portal de serviços da Prefeitura de Feira de Santana"
+    },
+    {
+     "campo": "Tipo",
+     "valor": "Certidão negativa de débitos mobiliários / pessoa jurídica"
+    },
+    {
+     "campo": "Identificação",
+     "valor": "CNPJ ou inscrição municipal do Ícone e da Feira 2"
+    },
+    {
+     "campo": "Dica",
+     "valor": "Débitos do terreno saem em certidão de imóvel, pela inscrição imobiliária"
+    }
+   ]
   },
   {
    "id": "tjba",
@@ -224,7 +470,33 @@
    "motivo": "O pedido é feito por formulário e a certidão sai depois.",
    "como_fazer": "IA preenche o pedido; o PDF chega depois.",
    "link": "https://portalcertidoes.tjba.jus.br/#/primeirograu",
-   "validade_padrao_dias": 30
+   "validade_padrao_dias": 30,
+   "como_preencher": [
+    {
+     "campo": "Instância",
+     "valor": "1º grau"
+    },
+    {
+     "campo": "Modelos",
+     "valor": "Fazer dois pedidos: \"Cível\" e \"Falência, concordata e recuperação judicial\""
+    },
+    {
+     "campo": "Tipo de pessoa",
+     "valor": "Jurídica"
+    },
+    {
+     "campo": "CNPJ e razão social",
+     "valor": "Exatamente como na Receita"
+    },
+    {
+     "campo": "Comarca",
+     "valor": "Salvador; Feira de Santana para Ícone e Feira 2"
+    },
+    {
+     "campo": "Dica",
+     "valor": "A certidão chega depois, pelo e-mail informado"
+    }
+   ]
   },
   {
    "id": "trf1",
@@ -240,7 +512,29 @@
    "motivo": "O site exige captcha para emitir.",
    "como_fazer": "IA preenche; você resolve o captcha.",
    "link": "https://sistemas.trf1.jus.br/certidao/#/solicitacao",
-   "validade_padrao_dias": 30
+   "validade_padrao_dias": 30,
+   "como_preencher": [
+    {
+     "campo": "Tipo de certidão",
+     "valor": "Cível (e Criminal, se o banco pedir)"
+    },
+    {
+     "campo": "Órgão",
+     "valor": "TRF1 e Seção Judiciária da Bahia (abrangência regional)"
+    },
+    {
+     "campo": "Tipo de pessoa",
+     "valor": "Jurídica"
+    },
+    {
+     "campo": "CNPJ",
+     "valor": "CNPJ da MATRIZ; marcar a opção de incluir filiais, se aparecer"
+    },
+    {
+     "campo": "Captcha",
+     "valor": "Resolver e Emitir"
+    }
+   ]
   },
   {
    "id": "cgu_pdf",
@@ -256,7 +550,25 @@
    "motivo": "O PDF oficial pede captcha. O conteúdo (CEIS/CNEP) já vem pelo TCU.",
    "como_fazer": "Só emitir o PDF quando o banco pedir o documento.",
    "link": "https://certidoes.cgu.gov.br/",
-   "validade_padrao_dias": 30
+   "validade_padrao_dias": 30,
+   "como_preencher": [
+    {
+     "campo": "Tipo",
+     "valor": "Certidão Negativa Correcional (CGU-PJ, CEIS, CNEP e CEPIM)"
+    },
+    {
+     "campo": "CNPJ",
+     "valor": "CNPJ da empresa, só números"
+    },
+    {
+     "campo": "Captcha",
+     "valor": "Resolver e Emitir"
+    },
+    {
+     "campo": "Dica",
+     "valor": "Só emita quando o banco pedir o PDF oficial; o conteúdo já vem pelo TCU"
+    }
+   ]
   },
   {
    "id": "protesto",
@@ -275,7 +587,25 @@
    "validade_padrao_dias": 30,
    "custo_base": "Tabelionato de Protesto, tabela TJBA 2026 (Tabela V)",
    "custo_valor": "R$ 41,78 por certidão, em cada cartório",
-   "custo_qtd": "por cartório de protesto de cada cidade"
+   "custo_qtd": "por cartório de protesto de cada cidade",
+   "como_preencher": [
+    {
+     "campo": "Acesso",
+     "valor": "Entrar com o gov.br"
+    },
+    {
+     "campo": "Documento",
+     "valor": "CNPJ"
+    },
+    {
+     "campo": "Abrangência",
+     "valor": "Nacional"
+    },
+    {
+     "campo": "Dica",
+     "valor": "A consulta é grátis; a certidão oficial é pedida em cada tabelionato de protesto da comarca (R$ 41,78 cada)"
+    }
+   ]
   },
   {
    "id": "biros",
@@ -293,7 +623,25 @@
    "link": "https://www.serasaempreendedor.com.br/v2/saude-do-seu-negocio/home/minha-empresa",
    "validade_padrao_dias": 30,
    "custo_base": "Serasa grátis na conta da empresa; SPC, Boa Vista e Quod só por contrato",
-   "custo_valor": "Serasa: R$ 0,00 · demais birôs: valor do contrato"
+   "custo_valor": "Serasa: R$ 0,00 · demais birôs: valor do contrato",
+   "como_preencher": [
+    {
+     "campo": "Caminho",
+     "valor": "Serasa › Saúde do seu Negócio › Minha Empresa"
+    },
+    {
+     "campo": "SPEs",
+     "valor": "Participações da sua empresa › Detalhes de cada SPE (sem custo)"
+    },
+    {
+     "campo": "Cuidado",
+     "valor": "\"Fazer consulta\" gasta crédito: não usar"
+    },
+    {
+     "campo": "Altamente Rentável",
+     "valor": "Não aparece em Participações; ver na aba Monitora CNPJ"
+    }
+   ]
   },
   {
    "id": "cadin",
@@ -309,7 +657,21 @@
    "motivo": "Exige entrar no e-CAC com o certificado digital da empresa.",
    "como_fazer": "Contabilidade/BPO consulta no e-CAC.",
    "link": "https://cav.receita.fazenda.gov.br/",
-   "validade_padrao_dias": 30
+   "validade_padrao_dias": 30,
+   "como_preencher": [
+    {
+     "campo": "Acesso",
+     "valor": "e-CAC ou Regularize, com o certificado digital da empresa"
+    },
+    {
+     "campo": "Menu",
+     "valor": "Situação fiscal / Consulta pendências"
+    },
+    {
+     "campo": "Dica",
+     "valor": "Feito pela contabilidade ou BPO"
+    }
+   ]
   },
   {
    "id": "cno_obra",
@@ -325,7 +687,25 @@
    "motivo": "Exige e-CAC com certificado digital.",
    "como_fazer": "Contabilidade/BPO emite no e-CAC.",
    "link": "https://www.gov.br/receitafederal/pt-br/assuntos/construcao-civil/cnd",
-   "validade_padrao_dias": 180
+   "validade_padrao_dias": 180,
+   "como_preencher": [
+    {
+     "campo": "Acesso",
+     "valor": "e-CAC com o certificado digital da empresa"
+    },
+    {
+     "campo": "Serviço",
+     "valor": "SERO (aferição de obra) › CND de obra"
+    },
+    {
+     "campo": "Identificação",
+     "valor": "Número do CNO da obra, não o CNPJ"
+    },
+    {
+     "campo": "Dica",
+     "valor": "Necessária para averbar a construção após o Habite-se"
+    }
+   ]
   },
   {
    "id": "juceb",
@@ -343,7 +723,25 @@
    "link": "https://www.juceb.ba.gov.br/",
    "validade_padrao_dias": 30,
    "custo_base": "JUCEB, tabela de preços (atualizada em 21/01/2026)",
-   "custo_valor": "R$ 37,00 por Certidão Simplificada (LTDA)"
+   "custo_valor": "R$ 37,00 por Certidão Simplificada (LTDA)",
+   "como_preencher": [
+    {
+     "campo": "Serviço",
+     "valor": "Certidão Simplificada"
+    },
+    {
+     "campo": "Identificação",
+     "valor": "NIRE ou CNPJ da empresa"
+    },
+    {
+     "campo": "Pagamento",
+     "valor": "Gerar e pagar o DAE (R$ 37,00)"
+    },
+    {
+     "campo": "Dica",
+     "valor": "Validade usual exigida pelos bancos: 30 dias"
+    }
+   ]
   },
   {
    "id": "matricula",
@@ -362,7 +760,29 @@
    "validade_padrao_dias": 30,
    "custo_base": "Registro de Imóveis, tabela TJBA 2026 (Tabela III)",
    "custo_valor": "R$ 118,78 por certidão de matrícula/ônus · R$ 178,18 a vintenária (cadeia sucessória) por imóvel · busca R$ 39,58",
-   "custo_qtd": "por imóvel (depende do nº de matrículas)"
+   "custo_qtd": "por imóvel (depende do nº de matrículas)",
+   "como_preencher": [
+    {
+     "campo": "Site",
+     "valor": "ONR › Certidão digital"
+    },
+    {
+     "campo": "Estado",
+     "valor": "BA"
+    },
+    {
+     "campo": "Cartório",
+     "valor": "Registro de Imóveis da circunscrição do terreno"
+    },
+    {
+     "campo": "Tipo",
+     "valor": "Matrícula com ônus reais (inteiro teor); vintenária se pedirem 20 anos"
+    },
+    {
+     "campo": "Identificação",
+     "valor": "Número da matrícula"
+    }
+   ]
   },
   {
    "id": "acoes_reais",
@@ -381,7 +801,29 @@
    "validade_padrao_dias": 30,
    "custo_base": "Registro de Imóveis, tabela TJBA 2026 (Tabela III)",
    "custo_valor": "R$ 118,78 por certidão",
-   "custo_qtd": "por imóvel (depende do nº de matrículas)"
+   "custo_qtd": "por imóvel (depende do nº de matrículas)",
+   "como_preencher": [
+    {
+     "campo": "Site",
+     "valor": "ONR › Certidão digital"
+    },
+    {
+     "campo": "Cartório",
+     "valor": "Registro de Imóveis da circunscrição do terreno"
+    },
+    {
+     "campo": "Tipo",
+     "valor": "Ações reais e pessoais reipersecutórias"
+    },
+    {
+     "campo": "Identificação",
+     "valor": "Número da matrícula"
+    },
+    {
+     "campo": "Dica",
+     "valor": "Peça junto com a matrícula para economizar a busca"
+    }
+   ]
   },
   {
    "id": "iptu",
@@ -397,7 +839,17 @@
    "motivo": "O site da Prefeitura recusa acesso automatizado e pede a inscrição imobiliária.",
    "como_fazer": "IA preenche no seu navegador com a inscrição de cada terreno.",
    "link": "https://www.sefaz.salvador.ba.gov.br/certidoes",
-   "validade_padrao_dias": 90
+   "validade_padrao_dias": 90,
+   "como_preencher": [
+    {
+     "campo": "Menu",
+     "valor": "Certidões › Certidão de débitos de imóvel"
+    },
+    {
+     "campo": "Identificação",
+     "valor": "Inscrição imobiliária de cada terreno, não o CNPJ"
+    }
+   ]
   },
   {
    "id": "spu",
@@ -417,6 +869,20 @@
    "aplica_a": [
     "porto-mtz",
     "porto-fil"
+   ],
+   "como_preencher": [
+    {
+     "campo": "Acesso",
+     "valor": "Portal de serviços da SPU com gov.br"
+    },
+    {
+     "campo": "Serviço",
+     "valor": "Certidão de Autorização de Transferência (CAT) / situação de foro e laudêmio"
+    },
+    {
+     "campo": "Identificação",
+     "valor": "RIP do imóvel"
+    }
    ]
   },
   {
@@ -433,7 +899,21 @@
    "motivo": "São documentos com validade própria; não há consulta pública por CNPJ.",
    "como_fazer": "Lançar a data de validade de cada documento.",
    "link": "",
-   "validade_padrao_dias": 365
+   "validade_padrao_dias": 365,
+   "como_preencher": [
+    {
+     "campo": "Onde",
+     "valor": "No órgão que emitiu: SEDUR/Prefeitura (alvará e Habite-se) ou INEMA/SEMAN (licença ambiental)"
+    },
+    {
+     "campo": "Identificação",
+     "valor": "Número do processo ou da licença"
+    },
+    {
+     "campo": "Dica",
+     "valor": "Lance a data de validade de cada documento"
+    }
+   ]
   }
  ]
 }

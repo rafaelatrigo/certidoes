@@ -238,6 +238,10 @@ main.gutter { padding-block: 22px 56px; }
 .painel .lista-cnpj > div { display: grid; grid-template-columns: minmax(0,1fr) auto; gap: 4px 10px; padding: 10px 12px; border-top: 1px solid var(--line); font-size: 13px; }
 .painel .lista-cnpj > div:first-child { border-top: 0; }
 .painel .lista-cnpj .det { grid-column: 1 / -1; color: var(--muted); font-size: 12.5px; }
+.preencher { border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+.preencher h3 { padding: 10px 12px; background: var(--accent-soft); font-size: 13.5px; }
+.preencher dl { padding: 10px 12px; grid-template-columns: 140px minmax(0,1fr) !important; }
+.preencher dd { font-weight: 600; }
 .nota { font-size: 13px; color: var(--muted); background: var(--surface-2); border-radius: 8px; padding: 10px 12px; }
 .acoes { display: flex; flex-wrap: wrap; gap: 8px; }
 .fechar { border: 1px solid var(--line); background: var(--surface); border-radius: 8px; width: 34px; height: 34px; cursor: pointer; flex: none; }
@@ -624,6 +628,10 @@ main.gutter { padding-block: 22px 56px; }
       <dt>Por quê</dt><dd>${esc(c.motivo)}</dd>
       <dt>Como fazer</dt><dd>${esc(c.como_fazer)}</dd>
     </dl>`;
+    if (c.como_preencher && c.como_preencher.length) {
+      html += `<div class="preencher"><h3>Como preencher no site</h3><dl>` +
+        c.como_preencher.map((x) => `<dt>${esc(x.campo)}</dt><dd>${esc(x.valor)}</dd>`).join("") + `</dl></div>`;
+    }
     html += `<div class="lista-cnpj">` + D.empresas.map((e) => {
       const x = cels.find((y) => y.e.id === e.id);
       if (!x) return `<div><span>${esc(curto(e))} <span class="mono muted">${esc(e.cnpj)}</span></span><span class="muted">não se aplica</span></div>`;
