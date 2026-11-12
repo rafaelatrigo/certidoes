@@ -170,6 +170,18 @@ main.gutter { padding-block: 22px 56px; }
 .grupo-quadro { display: grid; gap: 0; overflow: hidden; }
 .grupo-quadro > header { padding: 14px 18px; display: flex; flex-wrap: wrap; gap: 4px 14px; align-items: baseline; justify-content: space-between; background: var(--surface-2); border-bottom: 1px solid var(--line); }
 .grupo-quadro > header p { font-size: 13px; color: var(--muted); }
+.abas-cert { display: flex; gap: 6px; flex-wrap: wrap; border-bottom: 2px solid var(--line); }
+.abas-cert button { border: 0; background: none; padding: 10px 14px 12px; margin-bottom: -2px; border-bottom: 3px solid transparent; cursor: pointer; font-weight: 600; font-size: 14px; color: var(--muted); display: inline-flex; gap: 8px; align-items: center; }
+.abas-cert button[aria-selected="true"] { color: var(--fg); border-bottom-color: var(--marca-cobre); }
+.abas-cert .cont { font: 600 12px/1 var(--f-body); padding: 3px 8px; border-radius: 999px; background: var(--surface-2); color: var(--fg); }
+.abas-cert .cont.alerta { background: var(--b-pend-bg); color: var(--b-pend); }
+.aba-desc { font-size: 13.5px; color: var(--muted); max-width: 80ch; }
+.falha-linha { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 3fr) minmax(0, 1.4fr); gap: 14px; padding: 12px 18px; border-bottom: 1px solid var(--line); align-items: start; cursor: pointer; background: none; border-left: 0; border-right: 0; border-top: 0; text-align: left; width: 100%; }
+.falha-linha:last-child { border-bottom: 0; }
+.falha-linha:hover { background: var(--surface-2); }
+.falha-linha .msg { font-size: 12.5px; color: var(--muted); line-height: 1.45; overflow-wrap: anywhere; }
+.falha-linha .emps { font-size: 12.5px; line-height: 1.5; }
+@media (max-width: 760px) { .falha-linha { grid-template-columns: minmax(0, 1fr); gap: 4px; } }
 .linha { display: grid; grid-template-columns: minmax(0, 2.2fr) minmax(0, 2.4fr) minmax(0, 1.2fr) minmax(0, 2fr); gap: 14px; align-items: center; padding: 12px 18px; border-bottom: 1px solid var(--line); cursor: pointer; background: none; border-left: 0; border-right: 0; border-top: 0; text-align: left; width: 100%; }
 .linha:last-child { border-bottom: 0; }
 .linha:hover { background: var(--surface-2); }
@@ -309,11 +321,15 @@ main.gutter { padding-block: 22px 56px; }
 
       <!-- 3. QUADRO -->
       <section id="quadro" class="wrap" aria-labelledby="t-quadro">
-        <div class="sec-head">
-          <h2 id="t-quadro">Certidões por quem faz</h2>
-          <div class="legenda-cnpj" id="legenda-cnpj"></div>
+        <h2 id="t-quadro">Certidões</h2>
+        <div class="abas-cert" role="tablist" aria-label="Tipo de certidão">
+          <button type="button" role="tab" id="aba-ia" data-aba="ia" aria-selected="true">IA monitora sozinha <span class="cont" id="cont-ia">0</span></button>
+          <button type="button" role="tab" id="aba-humana" data-aba="humana" aria-selected="false">Precisam de ação humana <span class="cont" id="cont-humana">0</span></button>
+          <button type="button" role="tab" id="aba-falhas" data-aba="falhas" aria-selected="false">Falhas na execução <span class="cont" id="cont-falhas">0</span></button>
         </div>
-        <div class="quadro-head eyebrow"><span>Certidão</span><span>Situação nos CNPJs</span><span>Custo</span><span class="col-acao">Como fazer</span></div>
+        <p class="aba-desc" id="aba-desc"></p>
+        <div class="legenda-cnpj" id="legenda-cnpj"></div>
+        <div class="quadro-head eyebrow" id="quadro-head"><span>Certidão</span><span>Situação nos CNPJs</span><span>Custo</span><span class="col-acao">Como fazer</span></div>
         <div id="grupos" class="wrap" style="gap:16px"></div>
       </section>
 
@@ -414,6 +430,7 @@ main.gutter { padding-block: 22px 56px; }
     if (s === "indefinido") return { b: "pend", r: "Verificar resultado" };
     if (s === "erro") return { b: "nc", r: "Órgão fora do ar" };
     if (s === "sem_cadastro") return { b: "nc", r: "CAIXA não localizou o empregador" };
+    if (s === "sem_registro" && c.fonte !== "manual") return { b: "nc", r: "Ainda não consultado" };
     if (s === "sem_registro") {
       if (c.ia_resultado === "Semi-automático") return { b: "ajuda", r: "Aguardando você" };
       if (c.ia_resultado === "Viável sem custo") return { b: "nc", r: "Robô em construção" };
@@ -451,8 +468,14 @@ main.gutter { padding-block: 22px 56px; }
   const unicas = (cels) => cels.filter((x) => !x.herd);
 
   // ---------- quem faz ----------
+  let aba = ["ia", "humana", "falhas"].includes(location.hash.slice(1)) ? location.hash.slice(1) : "ia";
+  const DESC_ABA = {
+    ia: "O robô consulta estas fontes todo dia útil às 06:17, sem custo e sem login, e guarda o PDF de cada consulta.",
+    humana: "Gratuitas com captcha ou login (a IA preenche e alguém confirma) ou que exigem certificado digital, gov.br, taxa de cartório ou contrato.",
+    falhas: "Consultas automáticas que não terminaram na última execução. Onde havia um resultado anterior, ele foi mantido no painel.",
+  };
   const GRUPOS = [
-    { k: "robo",   t: "Robô consulta sozinho",   d: "Todo dia útil, sem custo e sem login.", teste: (c) => c.fonte !== "manual" || c.ia_resultado === "Viável sem custo" },
+    { k: "robo",   t: "Robô consulta sozinho",   d: "Todo dia útil, sem custo e sem login.", teste: (c) => c.fonte !== "manual" },
     { k: "ajuda",  t: "IA preenche, você confirma", d: "Grátis. A IA abre o site e preenche; você resolve o captcha ou faz o login.", teste: (c) => c.fonte === "manual" && c.ia_resultado === "Semi-automático" },
     { k: "manual", t: "Manual: a IA não consegue", d: "Exige certificado digital, gov.br, taxa de cartório ou contrato.", teste: (c) => c.fonte === "manual" && ["Manual", "Não é possível"].includes(c.ia_resultado) },
   ];
@@ -476,7 +499,7 @@ main.gutter { padding-block: 22px 56px; }
     $("#barra").setAttribute("aria-label", ORDEM_B.map((k) => `${B[k].t}: ${cont[k]}`).join(", "));
     $("#caixas").innerHTML = ORDEM_B.map((k) => `<button type="button" class="caixa ${B[k].cls}" data-b="${k}" aria-pressed="${filtro === k}">
       <span class="n">${cont[k]}</span><span class="t">${B[k].t}</span><span class="d">${B[k].d}</span></button>`).join("");
-    $("#caixas").querySelectorAll(".caixa").forEach((b) => b.onclick = () => { filtro = filtro === b.dataset.b ? null : b.dataset.b; render(); if (filtro) $("#quadro").scrollIntoView({ behavior: "smooth", block: "start" }); });
+    $("#caixas").querySelectorAll(".caixa").forEach((b) => b.onclick = () => { filtro = filtro === b.dataset.b ? null : b.dataset.b; if (filtro === "ajuda" || filtro === "nao") aba = "humana"; else if (filtro === "ok") aba = "ia"; render(); if (filtro) $("#quadro").scrollIntoView({ behavior: "smooth", block: "start" }); });
     const fa = $("#filtro-ativo");
     fa.hidden = !filtro;
     if (filtro) {
@@ -505,8 +528,38 @@ main.gutter { padding-block: 22px 56px; }
     // legenda da ordem dos CNPJs
     $("#legenda-cnpj").innerHTML = `<span>Cada quadradinho é um CNPJ, nesta ordem:</span>` + D.empresas.map((e, i) => `<span><b>${i + 1}</b> ${esc(curto(e))} ${e.tipo.startsWith("Matriz") ? "(M)" : "(F)"}</span>`).join("");
 
-    // quadro por grupo
-    $("#grupos").innerHTML = GRUPOS.map((g) => {
+    // abas
+    const falhas = un.filter((x) => x.c.fonte !== "manual" && x.res && (x.res.situacao === "erro" || x.res.ultima_falha));
+    const nIA = D.certidoes.filter(GRUPOS[0].teste).length;
+    const nHum = D.certidoes.filter((c) => GRUPOS[1].teste(c) || GRUPOS[2].teste(c)).length;
+    $("#cont-ia").textContent = nIA; $("#cont-humana").textContent = nHum;
+    const nFalhas = new Set(falhas.map((x) => x.c.id)).size;
+    $("#cont-falhas").textContent = nFalhas; $("#cont-falhas").classList.toggle("alerta", nFalhas > 0);
+    document.querySelectorAll(".abas-cert button").forEach((b) => b.setAttribute("aria-selected", String(b.dataset.aba === aba)));
+    $("#aba-desc").textContent = DESC_ABA[aba];
+    $("#quadro-head").hidden = aba === "falhas";
+    $("#legenda-cnpj").hidden = aba === "falhas";
+
+    if (aba === "falhas") {
+      const porCert = new Map();
+      for (const x of falhas) {
+        if (!porCert.has(x.c.id)) porCert.set(x.c.id, { c: x.c, itens: [] });
+        porCert.get(x.c.id).itens.push(x);
+      }
+      $("#grupos").innerHTML = porCert.size ? `<div class="card grupo-quadro"><header><h3>Última execução</h3><p>${esc(D.atualizado_em ? new Date(D.atualizado_em).toLocaleString("pt-BR") : "")}</p></header>` +
+        [...porCert.values()].map(({ c, itens }) => {
+          const msgs = [...new Set(itens.map((x) => (x.res.ultima_falha || {}).mensagem || "Sem resultado"))];
+          const mantidos = itens.filter((x) => x.res.situacao !== "erro").length;
+          return `<button type="button" class="falha-linha" data-c="${c.id}">
+            <span><span class="nome" style="font-weight:600">${esc(c.nome)}</span><br><span class="orgao" style="font-size:12px;color:var(--muted)">${esc(c.orgao)}</span></span>
+            <span><span class="emps">${itens.length} CNPJ(s): ${esc(itens.map((x) => curto(x.e) + (x.e.tipo.startsWith("Matriz") ? "" : " (F)")).join(", "))}</span><div class="msg">${msgs.map(esc).join("<br>")}</div></span>
+            <span class="msg">${mantidos ? `${mantidos} com o último resultado mantido` : "Sem resultado anterior"}${itens.length - mantidos && mantidos ? ` · ${itens.length - mantidos} sem resultado` : ""}<br>O robô tenta de novo na próxima execução.</span></button>`;
+        }).join("") + `</div>`
+        : `<div class="card pad muted">Nenhuma falha na última execução. Todas as consultas automáticas terminaram.</div>`;
+      $("#grupos").querySelectorAll(".falha-linha").forEach((b) => b.onclick = () => abrirCert(b.dataset.c));
+    } else {
+    const gruposAba = aba === "ia" ? [GRUPOS[0]] : [GRUPOS[1], GRUPOS[2]];
+    $("#grupos").innerHTML = gruposAba.map((g) => {
       const certs = D.certidoes.filter(g.teste).filter((c) => !filtro || cels.some((x) => x.c.id === c.id && x.b === filtro));
       if (!certs.length) return "";
       return `<div class="card grupo-quadro"><header><h3>${esc(g.t)}</h3><p>${esc(g.d)}</p></header>` + certs.map((c) => {
@@ -525,6 +578,7 @@ main.gutter { padding-block: 22px 56px; }
       }).join("") + `</div>`;
     }).join("") || `<div class="card pad muted">Nenhuma certidão nessa situação.</div>`;
     $("#grupos").querySelectorAll(".linha").forEach((b) => b.onclick = () => abrirCert(b.dataset.c));
+    }
 
     // empresas
     $("#lista-empresas").innerHTML = D.empresas.map((e) => {
@@ -809,6 +863,11 @@ main.gutter { padding-block: 22px 56px; }
     btn.disabled = false; btn.textContent = "Salvar agora";
   };
 
+  document.querySelectorAll(".abas-cert button").forEach((b) => b.onclick = () => {
+    aba = b.dataset.aba; filtro = null;
+    try { history.replaceState(null, "", "#" + aba); } catch {}
+    render();
+  });
   function mostrar(dados) {
     D = dados;
     $("#tela-login").hidden = true; $("#app").hidden = false; $("#btn-sair").hidden = false; $("#btn-atualizar").hidden = false; $("#nav").hidden = false;
