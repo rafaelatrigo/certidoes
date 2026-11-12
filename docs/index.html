@@ -181,6 +181,7 @@ main.gutter { padding-block: 22px 56px; }
 .menu-topo button[aria-selected="true"] { opacity: 1; border-bottom-color: var(--marca-cobre); color: var(--topo-fg); }
 .menu-topo .cont { background: rgba(255,255,255,.14); color: var(--topo-fg); }
 .menu-topo .cont.alerta { background: var(--b-pend); color: #fff; }
+@media (max-width: 1500px) { .topo .produto, .topo .marca .sep { display: none; } }
 @media (max-width: 900px) { .topo .wrap { flex-wrap: wrap; } .menu-topo { order: 3; width: 100%; } }
 .aba-desc { font-size: 13.5px; color: var(--muted); max-width: 80ch; }
 .falha-linha { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 3fr) minmax(0, 1.4fr); gap: 14px; padding: 12px 18px; border-bottom: 1px solid var(--line); align-items: start; cursor: pointer; background: none; border-left: 0; border-right: 0; border-top: 0; text-align: left; width: 100%; }
@@ -215,6 +216,22 @@ main.gutter { padding-block: 22px 56px; }
 .emp .cont { display: flex; flex-wrap: wrap; gap: 4px 10px; font-size: 12px; }
 .emp .cont span { color: var(--c); font-weight: 600; }
 
+/* aba com custo */
+.custo-card { padding: 18px 20px; display: grid; gap: 14px; }
+.custo-card > header { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 6px 16px; align-items: baseline; }
+.custo-card h3 { font-size: 17px; }
+.custo-card .orgao { font-size: 12.5px; color: var(--muted); }
+.custo-card .valor { font-weight: 700; color: var(--b-nc); font-size: 15px; max-width: 46ch; text-align: right; }
+.custo-info { display: grid; grid-template-columns: 180px minmax(0,1fr); gap: 6px 14px; margin: 0; font-size: 13.5px; }
+.custo-info dt { color: var(--muted); }
+.custo-info dd { margin: 0; overflow-wrap: anywhere; }
+.passos { background: var(--surface-2); border-radius: 10px; padding: 12px 16px; }
+.passos h4 { margin: 0 0 6px; font-size: 13.5px; }
+.passos ol, .passos-lat { margin: 0; padding-left: 1.2rem; display: grid; gap: 6px; font-size: 13.5px; line-height: 1.5; }
+.passos-lat { padding: 10px 12px 10px 2rem; }
+.btn-sec { justify-self: start; border: 1px solid var(--line); background: var(--surface); border-radius: 8px; padding: 7px 12px; font-weight: 600; font-size: 13px; cursor: pointer; }
+.btn-sec:hover { background: var(--surface-2); }
+@media (max-width: 600px) { .custo-info { grid-template-columns: minmax(0,1fr); } .custo-card .valor { text-align: left; } }
 /* custos */
 .custos table { border-collapse: collapse; width: 100%; font-size: 13.5px; }
 .custos th, .custos td { text-align: left; padding: 10px 12px; border-top: 1px solid var(--line); vertical-align: top; }
@@ -277,6 +294,7 @@ main.gutter { padding-block: 22px 56px; }
     <nav id="nav" class="menu-topo abas-cert" role="tablist" aria-label="Tipo de certidão" hidden>
       <button type="button" role="tab" id="aba-ia" data-aba="ia" aria-selected="true">IA monitora sozinha <span class="cont" id="cont-ia">0</span></button>
       <button type="button" role="tab" id="aba-humana" data-aba="humana" aria-selected="false">Precisam de ação humana <span class="cont" id="cont-humana">0</span></button>
+      <button type="button" role="tab" id="aba-custo" data-aba="custo" aria-selected="false">Certidões com custo <span class="cont" id="cont-custo">0</span></button>
       <button type="button" role="tab" id="aba-falhas" data-aba="falhas" aria-selected="false">Falhas na execução <span class="cont" id="cont-falhas">0</span></button>
     </nav>
     <div class="topo-acoes">
@@ -343,15 +361,6 @@ main.gutter { padding-block: 22px 56px; }
         <div class="empresas" id="lista-empresas"></div>
       </section>
 
-      <!-- 5. CUSTOS -->
-      <section id="custos" class="card pad custos" aria-labelledby="t-custos">
-        <div class="sec-head"><h2 id="t-custos">Certidões com custo</h2><span class="muted" style="font-size:13px">Todas as outras são gratuitas.</span></div>
-        <div class="tbox"><table id="tab-custos">
-          <thead><tr><th>Certidão</th><th>Como é cobrado</th><th>Valor por certidão</th><th>Quantas o grupo precisa</th></tr></thead>
-          <tbody></tbody>
-        </table></div>
-        <p class="muted" style="font-size:12.5px">Fontes: Tabelas III e V de custas e emolumentos do TJBA, vigentes desde 01/01/2026 (Decreto Judiciário nº 1075/2025), e tabela de preços da JUCEB para a capital. Pedidos pelo ONR ou por despachante podem ter taxa de serviço além do emolumento. Para atualizar, edite <span class="mono">custo_valor</span> em <span class="mono">config/certidoes.json</span>.</p>
-      </section>
 
       <!-- 6. POR QUE -->
       <section id="porque" class="duas" aria-label="Limites da IA">
@@ -472,16 +481,18 @@ main.gutter { padding-block: 22px 56px; }
   const unicas = (cels) => cels.filter((x) => !x.herd);
 
   // ---------- quem faz ----------
-  let aba = ["ia", "humana", "falhas"].includes(location.hash.slice(1)) ? location.hash.slice(1) : "ia";
+  let aba = ["ia", "humana", "custo", "falhas"].includes(location.hash.slice(1)) ? location.hash.slice(1) : "ia";
   const DESC_ABA = {
     ia: "O robô consulta estas fontes todo dia útil às 06:17, sem custo e sem login, e guarda o PDF de cada consulta.",
     humana: "Gratuitas com captcha ou login (a IA preenche e alguém confirma) ou que exigem certificado digital, gov.br, taxa de cartório ou contrato.",
+    custo: "Certidões que têm taxa de cartório ou junta comercial. Emitir só quando o banco ou o cartório pedir. Abaixo, quanto custa e o passo a passo de cada uma.",
     falhas: "Consultas automáticas que não terminaram na última execução. Onde havia um resultado anterior, ele foi mantido no painel.",
   };
+  const pago = (c) => c.custo !== "Grátis" && !/^Grátis/.test(c.custo);
   const GRUPOS = [
     { k: "robo",   t: "Robô consulta sozinho",   d: "Todo dia útil, sem custo e sem login.", teste: (c) => c.fonte !== "manual" },
-    { k: "ajuda",  t: "IA preenche, você confirma", d: "Grátis. A IA abre o site e preenche; você resolve o captcha ou faz o login.", teste: (c) => c.fonte === "manual" && c.ia_resultado === "Semi-automático" },
-    { k: "manual", t: "Manual: a IA não consegue", d: "Exige certificado digital, gov.br, taxa de cartório ou contrato.", teste: (c) => c.fonte === "manual" && ["Manual", "Não é possível"].includes(c.ia_resultado) },
+    { k: "ajuda",  t: "IA preenche, você confirma", d: "Grátis. A IA abre o site e preenche; você resolve o captcha ou faz o login.", teste: (c) => c.fonte === "manual" && !pago(c) && c.ia_resultado === "Semi-automático" },
+    { k: "manual", t: "Manual: a IA não consegue", d: "Exige certificado digital, gov.br, taxa de cartório ou contrato.", teste: (c) => c.fonte === "manual" && !pago(c) && ["Manual", "Não é possível"].includes(c.ia_resultado) },
   ];
 
   // ---------- render ----------
@@ -537,15 +548,36 @@ main.gutter { padding-block: 22px 56px; }
     const nIA = D.certidoes.filter(GRUPOS[0].teste).length;
     const nHum = D.certidoes.filter((c) => GRUPOS[1].teste(c) || GRUPOS[2].teste(c)).length;
     $("#cont-ia").textContent = nIA; $("#cont-humana").textContent = nHum;
+    $("#cont-custo").textContent = D.certidoes.filter(pago).length;
     const nFalhas = new Set(falhas.map((x) => x.c.id)).size;
     $("#cont-falhas").textContent = nFalhas; $("#cont-falhas").classList.toggle("alerta", nFalhas > 0);
     document.querySelectorAll(".abas-cert button").forEach((b) => b.setAttribute("aria-selected", String(b.dataset.aba === aba)));
     $("#aba-desc").textContent = DESC_ABA[aba];
-    $("#t-quadro").textContent = { ia: "IA monitora sozinha", humana: "Precisam de ação humana", falhas: "Falhas na execução" }[aba];
-    $("#quadro-head").hidden = aba === "falhas";
-    $("#legenda-cnpj").hidden = aba === "falhas";
+    $("#t-quadro").textContent = { ia: "IA monitora sozinha", humana: "Precisam de ação humana", custo: "Certidões com custo", falhas: "Falhas na execução" }[aba];
+    $("#quadro-head").hidden = aba === "falhas" || aba === "custo";
+    $("#legenda-cnpj").hidden = aba === "falhas" || aba === "custo";
 
-    if (aba === "falhas") {
+    if (aba === "custo") {
+      const pagas = D.certidoes.filter(pago);
+      $("#grupos").innerHTML = pagas.map((c) => {
+        const ap = D.empresas.filter((e) => aplica(c, e));
+        const qtd = c.escopo === "raiz" ? new Set(ap.map((e) => e.cnpj.slice(0, 10))).size : ap.length;
+        const passos = c.passo_a_passo || [c.como_fazer];
+        return `<article class="card custo-card">
+          <header><div><h3>${esc(c.nome)}</h3><span class="orgao">${esc(c.orgao)}</span></div>
+            <div class="valor">${esc(c.custo_valor || "a confirmar")}</div></header>
+          <dl class="custo-info">
+            <dt>Como é cobrado</dt><dd>${esc(c.custo_base || c.custo)}</dd>
+            <dt>Quantas o grupo precisa</dt><dd>${c.custo_qtd ? esc(c.custo_qtd) : `${qtd} ${c.escopo === "raiz" ? "(uma por empresa; a matriz vale para as filiais)" : "(uma por CNPJ)"}`}</dd>
+            <dt>Acesso</dt><dd>${esc(c.acesso)}</dd>
+            <dt>Onde pedir</dt><dd>${c.link ? `<a href="${esc(c.link)}" target="_blank" rel="noopener">${esc(c.link.replace(/^https?:\/\/(www\.)?/, "").replace(/\/$/, ""))}</a>` : "—"}</dd>
+          </dl>
+          <div class="passos"><h4>Como tirar</h4><ol>${passos.map((x) => `<li>${esc(x)}</li>`).join("")}</ol></div>
+          <button type="button" class="btn-sec" data-c="${c.id}">Ver campos do site e situação por CNPJ</button>
+        </article>`;
+      }).join("") + `<p class="muted" style="font-size:12.5px">Valores: Tabelas III e V de custas e emolumentos do TJBA, vigentes desde 01/01/2026 (Decreto Judiciário nº 1075/2025), e tabela da JUCEB para a capital. Pedidos pelo ONR ou por despachante podem ter taxa de serviço além do emolumento. A consulta do Serasa é gratuita e está na aba “Precisam de ação humana”; SPC, Boa Vista e Quod só com contrato.</p>`;
+      $("#grupos").querySelectorAll(".btn-sec").forEach((b) => b.onclick = () => abrirCert(b.dataset.c));
+    } else if (aba === "falhas") {
       const porCert = new Map();
       for (const x of falhas) {
         if (!porCert.has(x.c.id)) porCert.set(x.c.id, { c: x.c, itens: [] });
@@ -596,15 +628,6 @@ main.gutter { padding-block: 22px 56px; }
     }).join("");
     $("#lista-empresas").querySelectorAll(".emp").forEach((b) => b.onclick = () => abrirEmp(b.dataset.e));
 
-    // custos
-    const pagas = D.certidoes.filter((c) => c.custo !== "Grátis");
-    $("#tab-custos tbody").innerHTML = pagas.map((c) => {
-      const qtd = D.empresas.filter((e) => aplica(c, e)).filter((e) => c.escopo !== "raiz" || D.empresas.find((x) => x.cnpj.slice(0, 10) === e.cnpj.slice(0, 10)).id === e.id).length;
-      return `<tr><td><b>${esc(c.nome)}</b><br><span class="muted" style="font-size:12px">${esc(c.orgao)}</span></td>
-        <td>${esc(c.custo_base || c.custo)}</td>
-        <td>${c.custo_valor ? `<b>${esc(c.custo_valor)}</b>` : `<span class="tag pago">a confirmar</span>`}</td>
-        <td>${c.custo_qtd ? esc(c.custo_qtd) : `<span class="mono">${qtd}</span> ${c.escopo === "raiz" ? "(uma por grupo de CNPJ)" : "(uma por CNPJ)"}`}</td></tr>`;
-    }).join("");
 
     const ex = D.ultima_execucao || {};
     $("#rodape").innerHTML = `<span>Robô: ${ex.consultadas ?? 0} consultas automáticas, ${ex.falhas ?? 0} falhas na última execução</span>
@@ -621,13 +644,16 @@ main.gutter { padding-block: 22px 56px; }
     const c = D.certidoes.find((x) => x.id === cid);
     const cels = celulas().filter((x) => x.c.id === cid);
     let html = `<dl>
-      <dt>Quem faz</dt><dd>${esc((GRUPOS.find((g) => g.teste(c)) || {}).t || "")}</dd>
+      <dt>Quem faz</dt><dd>${esc((GRUPOS.find((g) => g.teste(c)) || {}).t || (pago(c) ? "Equipe: certidão com custo, emitir quando pedirem" : ""))}</dd>
       <dt>Custo</dt><dd>${esc(c.custo)}${c.custo_base ? `<br><span class="muted">${esc(c.custo_base)}</span>` : ""}${c.custo_valor ? `<br><b>${esc(c.custo_valor)}</b>` : ""}</dd>
       <dt>Acesso</dt><dd>${esc(c.acesso)}</dd>
       <dt>O que trava</dt><dd>${esc(c.bloqueio)}</dd>
       <dt>Por quê</dt><dd>${esc(c.motivo)}</dd>
       <dt>Como fazer</dt><dd>${esc(c.como_fazer)}</dd>
     </dl>`;
+    if (c.passo_a_passo && c.passo_a_passo.length) {
+      html += `<div class="preencher"><h3>Como tirar</h3><ol class="passos-lat">${c.passo_a_passo.map((x) => `<li>${esc(x)}</li>`).join("")}</ol></div>`;
+    }
     if (c.como_preencher && c.como_preencher.length) {
       html += `<div class="preencher"><h3>Como preencher no site</h3><dl>` +
         c.como_preencher.map((x) => `<dt>${esc(x.campo)}</dt><dd>${esc(x.valor)}</dd>`).join("") + `</dl></div>`;

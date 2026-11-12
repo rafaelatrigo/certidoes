@@ -605,6 +605,13 @@
      "campo": "Dica",
      "valor": "A consulta é grátis; a certidão oficial é pedida em cada tabelionato de protesto da comarca (R$ 41,78 cada)"
     }
+   ],
+   "passo_a_passo": [
+    "Consulta (grátis): entrar em pesquisaprotesto.com.br com o gov.br, informar o CNPJ e escolher abrangência nacional. Se não aparecer nada, não há protesto e não é preciso pagar nada.",
+    "Certidão oficial (paga): só quando o banco ou o cartório pedir. É uma certidão por tabelionato de protesto da cidade da sede (Salvador; Feira de Santana para Ícone e Feira 2).",
+    "Pedir a certidão em cada tabelionato pelo portal da CENPROT ou no balcão do cartório, informando CNPJ e razão social exatamente como na Receita.",
+    "Pagar o emolumento (R$ 41,78 por certidão, por cartório) pela forma que o cartório indicar.",
+    "Baixar o PDF quando for liberado e lançar resultado, emissão e validade no painel (dados/manuais.csv)."
    ]
   },
   {
@@ -741,7 +748,15 @@
      "campo": "Dica",
      "valor": "Validade usual exigida pelos bancos: 30 dias"
     }
-   ]
+   ],
+   "passo_a_passo": [
+    "Entrar no portal de serviços da JUCEB (juceb.ba.gov.br) com o gov.br de um sócio ou representante cadastrado.",
+    "Escolher Certidão Simplificada e informar o NIRE ou o CNPJ da empresa.",
+    "Gerar o DAE de R$ 37,00 e pagar (internet banking ou Pix, se disponível).",
+    "Depois da compensação, voltar ao portal e baixar a certidão digital (PDF com código de autenticação).",
+    "Emitir só quando o banco pedir: costumam exigir emissão de até 30 dias."
+   ],
+   "custo_qtd": "7, uma por empresa (a da matriz já traz as filiais)"
   },
   {
    "id": "matricula",
@@ -782,6 +797,14 @@
      "campo": "Identificação",
      "valor": "Número da matrícula"
     }
+   ],
+   "passo_a_passo": [
+    "Entrar em registradores.onr.org.br (cadastro com CPF/gov.br; pode ser com o cartão da empresa).",
+    "Ir em Certidão Digital, escolher BA e o Registro de Imóveis da circunscrição do terreno.",
+    "Escolher o tipo: matrícula com ônus reais (inteiro teor). Se pedirem a cadeia de 20 anos, escolher a vintenária.",
+    "Informar o número da matrícula. Sem o número, o cartório cobra a busca (R$ 39,58).",
+    "Pagar o emolumento mais a taxa de serviço do ONR e baixar o PDF quando o cartório liberar.",
+    "Dica: no mesmo pedido, inclua a certidão de ações reais e pessoais reipersecutórias."
    ]
   },
   {
@@ -823,6 +846,13 @@
      "campo": "Dica",
      "valor": "Peça junto com a matrícula para economizar a busca"
     }
+   ],
+   "passo_a_passo": [
+    "Entrar em registradores.onr.org.br, Certidão Digital, BA, Registro de Imóveis do terreno.",
+    "Escolher o tipo: ações reais e pessoais reipersecutórias.",
+    "Informar o número da matrícula (o mesmo da certidão de matrícula).",
+    "Pagar (R$ 118,78 mais a taxa de serviço do ONR) e baixar o PDF quando o cartório liberar.",
+    "Dica: peça junto com a matrícula para fazer um único pedido."
    ]
   },
   {
