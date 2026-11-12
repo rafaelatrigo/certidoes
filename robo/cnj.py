@@ -27,11 +27,15 @@ class ConsultaCNJ:
 
     def consultar(self, cnpj_digitos):
         p = self._page
-        try:
-            resp = p.goto(URL, wait_until="domcontentloaded", timeout=60000)
-            p.wait_for_selector("#num_cpf_cnpj", state="visible", timeout=30000)
-        except Exception as exc:
-            raise RuntimeError(f"Site do CNJ não respondeu ao robô: {str(exc).splitlines()[0][:120]}")
+        for tentativa in range(3):   # o CNJ às vezes demora a abrir: tenta de novo com pausa
+            try:
+                p.goto(URL, wait_until="domcontentloaded", timeout=45000)
+                p.wait_for_selector("#num_cpf_cnpj", state="visible", timeout=30000)
+                break
+            except Exception as exc:
+                if tentativa == 2:
+                    raise RuntimeError(f"Site do CNJ não respondeu ao robô: {str(exc).splitlines()[0][:120]}")
+                p.wait_for_timeout(15000)
         if p.locator("iframe[src*='captcha'], img[src*='captcha'], [id*='captcha']").count():
             raise RuntimeError("O CNJ passou a exigir captcha; consulta não automatizável")
 
