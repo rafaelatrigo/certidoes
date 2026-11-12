@@ -1,3 +1,2 @@
-Execução 2026-11-12T14:45:23-03:00 · duração total 171s
-Tempo por fonte: cnj 31s, pgfn 1s, receita 4s, tcu 105s
-cnj: Site do CNJ não respondeu ao robô: Page.wait_for_selector: Timeout 30000ms exceeded.
+Execução 2026-11-12T14:50:57-03:00 · duração total 265s
+Tempo por fonte: cnj 145s, pgfn 1s, receita 13s, tcu 106s
