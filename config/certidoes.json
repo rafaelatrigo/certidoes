@@ -136,7 +136,7 @@
    "bloqueio": "Nenhum",
    "ia_resultado": "Indisponível no órgão",
    "motivo": "O sistema do CNJ estava fora do ar na hora da consulta (29/10 13:46).",
-   "como_fazer": "Automático; o robô tenta de novo no dia seguinte.",
+   "como_fazer": "Automático todo dia.",
    "link": "https://www.cnj.jus.br/improbidade_adm/consultar_requerido.php",
    "tcu_chave": "cnj",
    "como_preencher": [
@@ -182,7 +182,7 @@
    "bloqueio": "Nenhum",
    "ia_resultado": "Consultado",
    "motivo": "A PGFN publica a base de devedores a cada trimestre. Indica dívida inscrita; não substitui a CND Federal.",
-   "como_fazer": "Automático: o robô lê cada nova base trimestral.",
+   "como_fazer": "Automático, a cada base trimestral.",
    "link": "https://www.listadevedores.pgfn.gov.br/",
    "validade_padrao_dias": 90,
    "como_preencher": [
@@ -220,7 +220,7 @@
    "bloqueio": "Nenhum",
    "ia_resultado": "Consultado",
    "motivo": "Formulário público da CAIXA sem captcha. O robô consulta e lê a validade do CRF.",
-   "como_fazer": "Automático: o robô consulta toda semana e perto do vencimento.",
+   "como_fazer": "Automático, semanal e perto do vencimento.",
    "link": "https://consulta-crf.caixa.gov.br/consultacrf/pages/consultaEmpregador.jsf",
    "validade_padrao_dias": 30,
    "como_preencher": [
@@ -258,7 +258,7 @@
    "bloqueio": "Captcha",
    "ia_resultado": "Semi-automático",
    "motivo": "O site exige captcha para emitir. Contornar captcha fere os termos do órgão.",
-   "como_fazer": "IA abre o site e preenche o CNPJ no seu navegador; você resolve o captcha. Validade de 180 dias.",
+   "como_fazer": "IA preenche; você resolve o captcha. Vale 180 dias.",
    "link": "https://servicos.receitafederal.gov.br/servico/certidoes/#/home/cnpj",
    "validade_padrao_dias": 180,
    "como_preencher": [
@@ -296,7 +296,7 @@
    "bloqueio": "Captcha",
    "ia_resultado": "Semi-automático",
    "motivo": "O site exige captcha para emitir.",
-   "como_fazer": "IA preenche; você resolve o captcha. Validade de 180 dias.",
+   "como_fazer": "IA preenche; você resolve o captcha. Vale 180 dias.",
    "link": "https://cndt-certidao.tst.jus.br/inicio.faces",
    "validade_padrao_dias": 180,
    "como_preencher": [
@@ -364,7 +364,7 @@
    "bloqueio": "Formulário interativo",
    "ia_resultado": "Semi-automático",
    "motivo": "O formulário só funciona interagindo com a página; a leitura automática não consegue enviar.",
-   "como_fazer": "IA preenche no seu navegador e baixa o PDF.",
+   "como_fazer": "IA preenche e baixa o PDF.",
    "link": "https://servicos.sefaz.ba.gov.br/sistemas/DSCRE/Modulos/Publico/EmissaoCertidao.aspx",
    "validade_padrao_dias": 60,
    "como_preencher": [
@@ -398,7 +398,7 @@
    "bloqueio": "Bloqueia robôs",
    "ia_resultado": "Semi-automático",
    "motivo": "O site da Prefeitura recusa acesso automatizado.",
-   "como_fazer": "IA preenche no seu navegador; você confirma. Vale para matriz e filiais em Salvador.",
+   "como_fazer": "IA preenche; você confirma.",
    "link": "https://www.sefaz.salvador.ba.gov.br/certidoes",
    "validade_padrao_dias": 90,
    "municipio": "Salvador",
@@ -433,7 +433,7 @@
    "bloqueio": "Formulário interativo",
    "ia_resultado": "Semi-automático",
    "motivo": "O Ícone fica em Feira de Santana; a certidão de Salvador não serve para ele.",
-   "como_fazer": "Emitir no portal da Prefeitura de Feira de Santana.",
+   "como_fazer": "Emitir no portal da Prefeitura.",
    "link": "https://www.feiradesantana.ba.gov.br/",
    "validade_padrao_dias": 90,
    "municipio": "Feira de Santana",
@@ -548,7 +548,7 @@
    "bloqueio": "Captcha",
    "ia_resultado": "Semi-automático",
    "motivo": "O PDF oficial pede captcha. O conteúdo (CEIS/CNEP) já vem pelo TCU.",
-   "como_fazer": "Só emitir o PDF quando o banco pedir o documento.",
+   "como_fazer": "Só se o banco pedir o PDF.",
    "link": "https://certidoes.cgu.gov.br/",
    "validade_padrao_dias": 30,
    "como_preencher": [
@@ -582,11 +582,11 @@
    "bloqueio": "Login gov.br",
    "ia_resultado": "Manual",
    "motivo": "A consulta detalhada exige login gov.br; a certidão oficial tem emolumentos por cartório.",
-   "como_fazer": "Consulta grátis em pesquisaprotesto.com.br com o seu gov.br.",
+   "como_fazer": "Consulta grátis com gov.br.",
    "link": "https://www.pesquisaprotesto.com.br/",
    "validade_padrao_dias": 30,
    "custo_base": "Tabelionato de Protesto, tabela TJBA 2026 (Tabela V)",
-   "custo_valor": "R$ 41,78 por certidão, em cada cartório",
+   "custo_valor": "R$ 41,78 por cartório",
    "custo_qtd": "por cartório de protesto de cada cidade",
    "como_preencher": [
     {
@@ -607,11 +607,9 @@
     }
    ],
    "passo_a_passo": [
-    "Consulta (grátis): entrar em pesquisaprotesto.com.br com o gov.br, informar o CNPJ e escolher abrangência nacional. Se não aparecer nada, não há protesto e não é preciso pagar nada.",
-    "Certidão oficial (paga): só quando o banco ou o cartório pedir. É uma certidão por tabelionato de protesto da cidade da sede (Salvador; Feira de Santana para Ícone e Feira 2).",
-    "Pedir a certidão em cada tabelionato pelo portal da CENPROT ou no balcão do cartório, informando CNPJ e razão social exatamente como na Receita.",
-    "Pagar o emolumento (R$ 41,78 por certidão, por cartório) pela forma que o cartório indicar.",
-    "Baixar o PDF quando for liberado e lançar resultado, emissão e validade no painel (dados/manuais.csv)."
+    "Consulta grátis em pesquisaprotesto.com.br (gov.br, CNPJ, abrangência nacional). Nada consta = não precisa pagar.",
+    "Se o banco pedir a certidão: uma por tabelionato da cidade da sede, pela CENPROT ou no cartório.",
+    "Pagar R$ 41,78 por cartório e baixar o PDF."
    ]
   },
   {
@@ -626,7 +624,7 @@
    "bloqueio": "Login da empresa",
    "ia_resultado": "Semi-automático",
    "motivo": "A conta Serasa da Carozzo mostra negativações, protestos, ações judiciais, cheques e falência da matriz e das SPEs, sem custo. Exige login da empresa, que só a equipe faz.",
-   "como_fazer": "Uma vez por mês: a equipe entra no Serasa e a IA lê a tela de cada SPE e lança no painel. SPC, Boa Vista e Quod continuam só com contrato.",
+   "como_fazer": "Mensal: você entra no Serasa, a IA lança.",
    "link": "https://www.serasaempreendedor.com.br/v2/saude-do-seu-negocio/home/minha-empresa",
    "validade_padrao_dias": 30,
    "custo_base": "Serasa grátis na conta da empresa; SPC, Boa Vista e Quod só por contrato",
@@ -662,7 +660,7 @@
    "bloqueio": "Certificado digital",
    "ia_resultado": "Manual",
    "motivo": "Exige entrar no e-CAC com o certificado digital da empresa.",
-   "como_fazer": "Contabilidade/BPO consulta no e-CAC.",
+   "como_fazer": "BPO consulta no e-CAC.",
    "link": "https://cav.receita.fazenda.gov.br/",
    "validade_padrao_dias": 30,
    "como_preencher": [
@@ -692,7 +690,7 @@
    "bloqueio": "Certificado digital",
    "ia_resultado": "Manual",
    "motivo": "Exige e-CAC com certificado digital.",
-   "como_fazer": "Contabilidade/BPO emite no e-CAC.",
+   "como_fazer": "BPO emite no e-CAC.",
    "link": "https://www.gov.br/receitafederal/pt-br/assuntos/construcao-civil/cnd",
    "validade_padrao_dias": 180,
    "como_preencher": [
@@ -730,7 +728,7 @@
    "link": "https://www.juceb.ba.gov.br/",
    "validade_padrao_dias": 30,
    "custo_base": "JUCEB, tabela de preços (atualizada em 21/01/2026)",
-   "custo_valor": "R$ 37,00 por Certidão Simplificada (LTDA)",
+   "custo_valor": "R$ 37,00",
    "como_preencher": [
     {
      "campo": "Serviço",
@@ -750,13 +748,11 @@
     }
    ],
    "passo_a_passo": [
-    "Entrar no portal de serviços da JUCEB (juceb.ba.gov.br) com o gov.br de um sócio ou representante cadastrado.",
-    "Escolher Certidão Simplificada e informar o NIRE ou o CNPJ da empresa.",
-    "Gerar o DAE de R$ 37,00 e pagar (internet banking ou Pix, se disponível).",
-    "Depois da compensação, voltar ao portal e baixar a certidão digital (PDF com código de autenticação).",
-    "Emitir só quando o banco pedir: costumam exigir emissão de até 30 dias."
+    "Entrar em juceb.ba.gov.br com gov.br.",
+    "Certidão Simplificada › NIRE ou CNPJ.",
+    "Pagar o DAE (R$ 37,00) e baixar o PDF após a compensação."
    ],
-   "custo_qtd": "7, uma por empresa (a da matriz já traz as filiais)"
+   "custo_qtd": "7 (por empresa)"
   },
   {
    "id": "matricula",
@@ -770,11 +766,11 @@
    "bloqueio": "Pagamento de emolumentos",
    "ia_resultado": "Manual",
    "motivo": "Cartório cobra emolumentos por certidão.",
-   "como_fazer": "Pedir pelo ONR (registradores.onr.org.br).",
+   "como_fazer": "Pedir pelo ONR.",
    "link": "https://www.registradores.onr.org.br/",
    "validade_padrao_dias": 30,
    "custo_base": "Registro de Imóveis, tabela TJBA 2026 (Tabela III)",
-   "custo_valor": "R$ 118,78 por certidão de matrícula/ônus · R$ 178,18 a vintenária (cadeia sucessória) por imóvel · busca R$ 39,58",
+   "custo_valor": "R$ 118,78 · vintenária R$ 178,18 · busca R$ 39,58",
    "custo_qtd": "por imóvel (depende do nº de matrículas)",
    "como_preencher": [
     {
@@ -799,12 +795,10 @@
     }
    ],
    "passo_a_passo": [
-    "Entrar em registradores.onr.org.br (cadastro com CPF/gov.br; pode ser com o cartão da empresa).",
-    "Ir em Certidão Digital, escolher BA e o Registro de Imóveis da circunscrição do terreno.",
-    "Escolher o tipo: matrícula com ônus reais (inteiro teor). Se pedirem a cadeia de 20 anos, escolher a vintenária.",
-    "Informar o número da matrícula. Sem o número, o cartório cobra a busca (R$ 39,58).",
-    "Pagar o emolumento mais a taxa de serviço do ONR e baixar o PDF quando o cartório liberar.",
-    "Dica: no mesmo pedido, inclua a certidão de ações reais e pessoais reipersecutórias."
+    "registradores.onr.org.br › Certidão Digital › BA › cartório do terreno.",
+    "Tipo: matrícula com ônus reais (vintenária se pedirem 20 anos).",
+    "Informar a matrícula (sem ela, + busca R$ 39,58), pagar e baixar o PDF.",
+    "Peça junto a de ações reais."
    ]
   },
   {
@@ -823,7 +817,7 @@
    "link": "https://www.registradores.onr.org.br/",
    "validade_padrao_dias": 30,
    "custo_base": "Registro de Imóveis, tabela TJBA 2026 (Tabela III)",
-   "custo_valor": "R$ 118,78 por certidão",
+   "custo_valor": "R$ 118,78",
    "custo_qtd": "por imóvel (depende do nº de matrículas)",
    "como_preencher": [
     {
@@ -848,11 +842,9 @@
     }
    ],
    "passo_a_passo": [
-    "Entrar em registradores.onr.org.br, Certidão Digital, BA, Registro de Imóveis do terreno.",
-    "Escolher o tipo: ações reais e pessoais reipersecutórias.",
-    "Informar o número da matrícula (o mesmo da certidão de matrícula).",
-    "Pagar (R$ 118,78 mais a taxa de serviço do ONR) e baixar o PDF quando o cartório liberar.",
-    "Dica: peça junto com a matrícula para fazer um único pedido."
+    "registradores.onr.org.br › Certidão Digital › BA › cartório do terreno.",
+    "Tipo: ações reais e pessoais reipersecutórias, pela matrícula.",
+    "Pagar e baixar o PDF. Peça junto com a matrícula."
    ]
   },
   {
@@ -867,7 +859,7 @@
    "bloqueio": "Bloqueia robôs",
    "ia_resultado": "Semi-automático",
    "motivo": "O site da Prefeitura recusa acesso automatizado e pede a inscrição imobiliária.",
-   "como_fazer": "IA preenche no seu navegador com a inscrição de cada terreno.",
+   "como_fazer": "IA preenche com a inscrição do terreno.",
    "link": "https://www.sefaz.salvador.ba.gov.br/certidoes",
    "validade_padrao_dias": 90,
    "como_preencher": [
@@ -927,7 +919,7 @@
    "bloqueio": "Não é consulta online",
    "ia_resultado": "Manual",
    "motivo": "São documentos com validade própria; não há consulta pública por CNPJ.",
-   "como_fazer": "Lançar a data de validade de cada documento.",
+   "como_fazer": "Lançar a validade de cada documento.",
    "link": "",
    "validade_padrao_dias": 365,
    "como_preencher": [
