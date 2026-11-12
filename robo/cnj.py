@@ -37,9 +37,17 @@ class ConsultaCNJ:
 
         p.check("#tipoPessoaJuridica")
         p.fill("#num_cpf_cnpj", cnpj_digitos)
-        with p.expect_navigation(wait_until="domcontentloaded", timeout=40000):
-            p.click("input[value='Pesquisar']")
-        texto = " ".join(p.inner_text("body").split())
+        p.click("input[value='Pesquisar']")
+        # o site mostra "Pesquisando..." e só depois envia o formulário: espera a tabela de resultado
+        texto = ""
+        for _ in range(60):
+            p.wait_for_timeout(1000)
+            try:
+                texto = " ".join(p.inner_text("body").split())
+            except Exception:
+                continue   # página trocando no meio da leitura
+            if "Nenhum Requerido encontrado" in texto or re.search(r"N[úu]m\. Processo", texto):
+                break
 
         if "Nenhum Requerido encontrado" in texto:
             situacao, tipo_cert = "negativa", "N"
