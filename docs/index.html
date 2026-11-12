@@ -175,6 +175,13 @@ main.gutter { padding-block: 22px 56px; }
 .abas-cert button[aria-selected="true"] { color: var(--fg); border-bottom-color: var(--marca-cobre); }
 .abas-cert .cont { font: 600 12px/1 var(--f-body); padding: 3px 8px; border-radius: 999px; background: var(--surface-2); color: var(--fg); }
 .abas-cert .cont.alerta { background: var(--b-pend-bg); color: var(--b-pend); }
+.topo nav.menu-topo { border-bottom: 0; gap: 2px; flex-wrap: nowrap; overflow-x: auto; }
+.menu-topo button { color: var(--topo-fg); opacity: .75; padding: 8px 12px; margin-bottom: 0; border-bottom: 3px solid transparent; border-radius: 0; font-size: 13.5px; white-space: nowrap; }
+.menu-topo button:hover { opacity: 1; }
+.menu-topo button[aria-selected="true"] { opacity: 1; border-bottom-color: var(--marca-cobre); color: var(--topo-fg); }
+.menu-topo .cont { background: rgba(255,255,255,.14); color: var(--topo-fg); }
+.menu-topo .cont.alerta { background: var(--b-pend); color: #fff; }
+@media (max-width: 900px) { .topo .wrap { flex-wrap: wrap; } .menu-topo { order: 3; width: 100%; } }
 .aba-desc { font-size: 13.5px; color: var(--muted); max-width: 80ch; }
 .falha-linha { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 3fr) minmax(0, 1.4fr); gap: 14px; padding: 12px 18px; border-bottom: 1px solid var(--line); align-items: start; cursor: pointer; background: none; border-left: 0; border-right: 0; border-top: 0; text-align: left; width: 100%; }
 .falha-linha:last-child { border-bottom: 0; }
@@ -245,7 +252,7 @@ main.gutter { padding-block: 22px 56px; }
   .linha, .quadro-head { grid-template-columns: minmax(0, 1fr); }
   .quadro-head { display: none; }
   .atencao li button { grid-template-columns: minmax(0,1fr); gap: 4px; }
-  .marca .produto, .marca .sep, .topo nav { display: none; }
+  .marca .produto, .marca .sep { display: none; }
 }
 @media (prefers-reduced-motion: no-preference) {
   .painel:not([hidden]) { animation: entra .18s ease-out; }
@@ -263,12 +270,10 @@ main.gutter { padding-block: 22px 56px; }
       <span class="sep" aria-hidden="true"></span>
       <span class="produto">Controle de certidões</span>
     </div>
-    <nav id="nav" hidden>
-      <a href="#visao">Visão geral</a>
-      <a href="#quadro">Certidões</a>
-      <a href="#empresas">Empresas</a>
-      <a href="#custos">Custos</a>
-      <a href="#porque">Limites da IA</a>
+    <nav id="nav" class="menu-topo abas-cert" role="tablist" aria-label="Tipo de certidão" hidden>
+      <button type="button" role="tab" id="aba-ia" data-aba="ia" aria-selected="true">IA monitora sozinha <span class="cont" id="cont-ia">0</span></button>
+      <button type="button" role="tab" id="aba-humana" data-aba="humana" aria-selected="false">Precisam de ação humana <span class="cont" id="cont-humana">0</span></button>
+      <button type="button" role="tab" id="aba-falhas" data-aba="falhas" aria-selected="false">Falhas na execução <span class="cont" id="cont-falhas">0</span></button>
     </nav>
     <div class="topo-acoes">
       <button class="btn-atualizar" type="button" id="btn-atualizar" hidden><span class="gira" aria-hidden="true"></span><span id="txt-atualizar">Atualizar agora</span></button>
@@ -313,24 +318,19 @@ main.gutter { padding-block: 22px 56px; }
         </div>
       </section>
 
-      <!-- 2. ATENÇÃO -->
-      <section class="card atencao" aria-labelledby="t-atencao">
-        <div class="pad sec-head" style="padding-bottom:12px"><h2 id="t-atencao">Precisa de atenção agora</h2><span class="eyebrow" id="cont-atencao"></span></div>
-        <ul id="lista-atencao"></ul>
-      </section>
-
       <!-- 3. QUADRO -->
       <section id="quadro" class="wrap" aria-labelledby="t-quadro">
         <h2 id="t-quadro">Certidões</h2>
-        <div class="abas-cert" role="tablist" aria-label="Tipo de certidão">
-          <button type="button" role="tab" id="aba-ia" data-aba="ia" aria-selected="true">IA monitora sozinha <span class="cont" id="cont-ia">0</span></button>
-          <button type="button" role="tab" id="aba-humana" data-aba="humana" aria-selected="false">Precisam de ação humana <span class="cont" id="cont-humana">0</span></button>
-          <button type="button" role="tab" id="aba-falhas" data-aba="falhas" aria-selected="false">Falhas na execução <span class="cont" id="cont-falhas">0</span></button>
-        </div>
         <p class="aba-desc" id="aba-desc"></p>
         <div class="legenda-cnpj" id="legenda-cnpj"></div>
         <div class="quadro-head eyebrow" id="quadro-head"><span>Certidão</span><span>Situação nos CNPJs</span><span>Custo</span><span class="col-acao">Como fazer</span></div>
         <div id="grupos" class="wrap" style="gap:16px"></div>
+      </section>
+
+      <!-- 2. ATENÇÃO -->
+      <section class="card atencao" aria-labelledby="t-atencao">
+        <div class="pad sec-head" style="padding-bottom:12px"><h2 id="t-atencao">Precisa de atenção agora</h2><span class="eyebrow" id="cont-atencao"></span></div>
+        <ul id="lista-atencao"></ul>
       </section>
 
       <!-- 4. EMPRESAS -->
@@ -537,6 +537,7 @@ main.gutter { padding-block: 22px 56px; }
     $("#cont-falhas").textContent = nFalhas; $("#cont-falhas").classList.toggle("alerta", nFalhas > 0);
     document.querySelectorAll(".abas-cert button").forEach((b) => b.setAttribute("aria-selected", String(b.dataset.aba === aba)));
     $("#aba-desc").textContent = DESC_ABA[aba];
+    $("#t-quadro").textContent = { ia: "IA monitora sozinha", humana: "Precisam de ação humana", falhas: "Falhas na execução" }[aba];
     $("#quadro-head").hidden = aba === "falhas";
     $("#legenda-cnpj").hidden = aba === "falhas";
 
@@ -867,6 +868,7 @@ main.gutter { padding-block: 22px 56px; }
     aba = b.dataset.aba; filtro = null;
     try { history.replaceState(null, "", "#" + aba); } catch {}
     render();
+    window.scrollTo({ top: 0, behavior: "smooth" });
   });
   function mostrar(dados) {
     D = dados;
