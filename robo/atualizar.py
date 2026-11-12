@@ -292,6 +292,8 @@ def main():
     diagnostico = {}
     fgts_cli = None
     fgts_bloqueio = None
+    cnj_cli = None
+    cnj_bloqueio = None
     tcu_pdf_off = False
     tcu_pdf_falhou_em = estado_ant.get("tcu_pdf_falhou_em")
 
@@ -371,6 +373,28 @@ def main():
                     resultados[chave] = novo
                     resumo["consultadas"] += 1
                     continue
+                elif cert["fonte"] == "cnj":
+                    if cnj_bloqueio:
+                        raise RuntimeError(cnj_bloqueio)
+                    if time.time() - inicio_total > LIMITE_SEG:
+                        raise RuntimeError("Tempo da rodada esgotado; mantido o último resultado")
+                    if cnj_cli is None:
+                        import cnj
+                        cnj_cli = cnj.ConsultaCNJ()
+                    try:
+                        novo = cnj_cli.consultar(cnpj)
+                    except RuntimeError as exc:
+                        if "não respondeu" in str(exc) or "captcha" in str(exc):
+                            cnj_bloqueio = str(exc)   # site fora do alcance: não insiste nos demais CNPJs
+                        raise
+                    novo["emissao"] = hoje().isoformat()
+                    novo["validade"] = somar_dias(novo["emissao"], 7)
+                    pdf = novo.pop("_pdf", None)
+                    if pdf:
+                        novo["comprovante"] = salvar_pdf(pdf, f"{emp['id']}_cnj_improbidade", "Certidão CNIA CNJ", novo["emissao"])
+                    elif anterior.get("comprovante"):
+                        novo["comprovante"] = anterior["comprovante"]
+                    time.sleep(2)
                 elif cert["fonte"] == "receita":
                     if cnpj not in receita_cache:
                         receita_cache[cnpj] = consultar_receita(cnpj)
@@ -430,6 +454,8 @@ def main():
 
     if fgts_cli is not None:
         fgts_cli.fechar()
+    if cnj_cli is not None:
+        cnj_cli.fechar()
     relatorio.fechar()
     import navegador
     navegador.fechar()

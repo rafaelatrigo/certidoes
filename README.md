@@ -11,7 +11,7 @@ Um robô (GitHub Actions) roda todo dia útil às 06:17 e consulta sozinho, de g
 | Situação cadastral do CNPJ | Receita Federal, base aberta (minhareceita.org, com reserva em publica.cnpj.ws) |
 | Licitantes inidôneos | TCU, consulta consolidada (API pública) |
 | CEIS e CNEP | Portal da Transparência, pela consulta do TCU |
-| Improbidade (CNIA) | CNJ, pela consulta do TCU (o sistema do CNJ cai com frequência) |
+| Improbidade (CNIA) | CNJ, consulta pública direta, com a certidão oficial em PDF |
 | Regularidade do FGTS (CRF) | CAIXA, formulário público sem captcha; toda semana e perto do vencimento |
 | Dívida ativa da União | PGFN, base aberta trimestral (geral, previdenciária e FGTS); indica dívida inscrita, não substitui a CND |
 
