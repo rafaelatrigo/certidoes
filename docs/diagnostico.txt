@@ -1,3 +1,4 @@
-Execução 2026-11-11T14:08:17-03:00 · duração total 109s
-Tempo por fonte: pgfn 1s, receita 94s
-tcu: TCU não respondeu (firewall do TCU ou instabilidade)
+Execução 2026-11-12T14:12:36-03:00 · duração total 210s
+Tempo por fonte: pgfn 1s, receita 8s, tcu 170s, tcu_pdf 63s
+fgts: Formulário da CAIXA não carregou (HTTP 403, título 'Azion - Default error page'): Forbidden Error Details 2026-11-12 17:12:06 consulta-crf.caixa.gov.br/consultacrf/pages/consultaEmpregador.jsf Your IP 3.42.157.54 Request ID b1c8c6854b55c94fc0
+tcu: Sistema do órgão indisponível na hora da consulta
