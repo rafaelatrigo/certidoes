@@ -1,3 +1,4 @@
-Execução 2026-11-16T16:41:55-03:00 · duração total 436s
-Tempo por fonte: cnj 137s, pgfn 1s, receita 0s, tcu 105s
-receita: 404 Client Error: Not Found for url: https://minhareceita.org/[cnpj] | 500 Server Error: Internal Server Error for url: https://publica.cnpj.ws/cnpj/[cnpj]
+Execução 2026-11-17T15:36:47-03:00 · duração total 194s
+Tempo por fonte: cnj 146s, pgfn 1s, receita 3s
+fgts: Formulário da CAIXA não carregou (HTTP 403, título 'Azion - Default error page'): Forbidden Error Details 2026-11-17 18:36:17 consulta-crf.caixa.gov.br/consultacrf/pages/consultaEmpregador.jsf Your IP 3.42.157.132 Request ID 6b73cc017717a8cfd
+tcu: TCU não respondeu (firewall do TCU ou instabilidade)
