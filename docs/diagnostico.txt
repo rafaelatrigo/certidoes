@@ -1,4 +1,3 @@
-Execução 2026-11-18T15:05:39-03:00 · duração total 204s
-Tempo por fonte: cnj 90s, fgts 29s, pgfn 1s, receita 8s
-cnj: Resposta do CNJ não reconhecida: va e o endereço que você acessou. Cadastro Nacional de Condenações Cíveis por Ato de Improbidade Administrativa e Inelegibilidade — Conselho Nacional de Justiça
-tcu: TCU não respondeu (firewall do TCU ou instabilidade)
+Execução 2026-11-19T15:25:02-03:00 · duração total 569s
+Tempo por fonte: cnj 287s, fgts 31s, pgfn 1s, receita 4s, tcu 177s, tcu_pdf 65s
+cnj: Resposta do CNJ não reconhecida: dica Física CPF/CNPJ: Nome da Pessoa: Verificando Informacoes... Cadastro Nacional de Condenações Cíveis por Ato de Improbidade Administrativa e Inelegibilidade
