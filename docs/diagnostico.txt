@@ -1,3 +1,2 @@
-Execução 2026-11-19T15:25:02-03:00 · duração total 569s
-Tempo por fonte: cnj 287s, fgts 31s, pgfn 1s, receita 4s, tcu 177s, tcu_pdf 65s
-cnj: Resposta do CNJ não reconhecida: dica Física CPF/CNPJ: Nome da Pessoa: Verificando Informacoes... Cadastro Nacional de Condenações Cíveis por Ato de Improbidade Administrativa e Inelegibilidade
+Execução 2026-11-20T14:51:17-03:00 · duração total 251s
+Tempo por fonte: cnj 139s, pgfn 1s, receita 6s, tcu 105s
