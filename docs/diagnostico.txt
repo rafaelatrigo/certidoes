@@ -1,3 +1,2 @@
-Execução 2026-11-23T18:24:25-03:00 · duração total 306s
-Tempo por fonte: cnj 140s, fgts 6s, pgfn 1s, receita 15s, tcu 106s
-receita: 503 Server Error: Service Unavailable for url: https://minhareceita.org/[cnpj] | 429 Client Error: Too Many Requests for url: https://publica.cnpj.ws/cnpj/[cnpj]
+Execução 2026-11-24T17:13:31-03:00 · duração total 258s
+Tempo por fonte: cnj 147s, pgfn 1s, receita 4s, tcu 106s
