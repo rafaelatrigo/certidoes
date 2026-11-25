@@ -1,2 +1,2 @@
-Execução 2026-11-24T17:13:31-03:00 · duração total 258s
-Tempo por fonte: cnj 147s, pgfn 1s, receita 4s, tcu 106s
+Execução 2026-11-25T16:19:26-03:00 · duração total 280s
+Tempo por fonte: cnj 144s, fgts 26s, pgfn 1s, receita 2s, tcu 106s
